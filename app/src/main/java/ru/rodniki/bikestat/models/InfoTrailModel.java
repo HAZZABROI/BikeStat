@@ -1,21 +1,23 @@
-package ru.rodniki.bikestat;
+package ru.rodniki.bikestat.models;
 
 public class InfoTrailModel {
     String timeStart;
     String timeTotal;
-    int idTrail;
     int avgBPM;
     int avgVelocity;
-    int totalRange;
+    String totalRange;
+    String dateStart;
+    String id;
 
 
-    public InfoTrailModel(String timeStart, String timeTotal, int idTrail, int avgBPM, int avgVelocity, int totalRange) {
+    public InfoTrailModel(String timeStart, String timeTotal, int avgBPM, int avgVelocity, String totalRange, String dateStart, String id) {
         this.timeStart = timeStart;
         this.timeTotal = timeTotal;
-        this.idTrail = idTrail;
         this.avgBPM = avgBPM;
         this.avgVelocity = avgVelocity;
         this.totalRange = totalRange;
+        this.dateStart = dateStart;
+        this.id = id;
     }
 
 
@@ -27,9 +29,6 @@ public class InfoTrailModel {
         return timeTotal;
     }
 
-    public int getIdTrail() {
-        return idTrail;
-    }
 
     public int getAvgBPM() {
         return avgBPM;
@@ -39,7 +38,7 @@ public class InfoTrailModel {
         return avgVelocity;
     }
 
-    public int getTotalRange() {
+    public String getTotalRange() {
         return totalRange;
     }
 
@@ -51,9 +50,6 @@ public class InfoTrailModel {
         this.timeTotal = timeTotal;
     }
 
-    public void setIdTrail(int idTrail) {
-        this.idTrail = idTrail;
-    }
 
     public void setAvgBPM(int avgBPM) {
         this.avgBPM = avgBPM;
@@ -63,7 +59,23 @@ public class InfoTrailModel {
         this.avgVelocity = avgVelocity;
     }
 
-    public void setTotalRange(int totalRange) {
+    public void setTotalRange(String totalRange) {
         this.totalRange = totalRange;
+    }
+
+    public String getDateStart() {
+        return dateStart;
+    }
+
+    public void setDateStart(String dateStart) {
+        this.dateStart = dateStart;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }

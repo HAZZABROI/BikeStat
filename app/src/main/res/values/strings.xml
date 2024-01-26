@@ -1,4 +1,71 @@
+
 <resources>
     <string name="app_name">BikeStat</string>
     <string name="title_activity_main">MainActivity</string>
+
+
+    <string-array name="trail_timeStart">
+        <item>16:25</item>
+        <item>11:43</item>
+        <item>10:45</item>
+        <item>12:45</item>
+        <item>13:45</item>
+    </string-array>
+
+    <string-array name="trail_ids">
+        <item>1234545</item>
+        <item>1928734</item>
+        <item>1440987</item>
+        <item>8176591</item>
+        <item>1234694</item>
+    </string-array>
+
+    <string-array name="trail_timeTotalWeek">
+        <item>01:45:24</item>
+    </string-array>
+
+    <string-array name="trail_distanceTotalWeek">
+        <item>25</item>
+    </string-array>
+
+    <string-array name="trail_timeTotal">
+        <item>00:45:24</item>
+        <item>00:22:24</item>
+        <item>01:45:29</item>
+        <item>03:45:29</item>
+        <item>00:45:29</item>
+    </string-array>
+
+    <string-array name="trail_totalRange">
+        <item>2.5</item>
+        <item>3.0</item>
+        <item>2.6</item>
+        <item>1.6</item>
+        <item>4.6</item>
+    </string-array>
+
+    <string-array name="trail_dateStart">
+        <item>2024-01-23</item>
+        <item>2024-01-24</item>
+        <item>2024-01-25</item>
+        <item>2024-02-25</item>
+        <item>2024-02-25</item>
+    </string-array>
+
+    <integer-array name="trail_avgBPM">
+        <item>78</item>
+        <item>89</item>
+        <item>99</item>
+        <item>99</item>
+        <item>99</item>
+    </integer-array>
+
+    <integer-array name="trail_avgVelocity">
+        <item>33</item>
+        <item>22</item>
+        <item>16</item>
+        <item>16</item>
+        <item>16</item>
+    </integer-array>
+
 </resources>

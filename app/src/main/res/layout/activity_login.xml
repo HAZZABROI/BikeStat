@@ -8,7 +8,7 @@
     android:orientation="vertical"
     android:gravity="center"
     android:background="@drawable/loginbkg"
-    tools:context=".LoginActivity">
+    tools:context=".activitys.LoginActivity">
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
@@ -39,7 +39,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:id="@+id/username"
-                android:background="@drawable/custom_card_diff_3"
+                android:background="@drawable/custom_edittext_bkg"
                 android:drawableLeft="@drawable/baseline_person_24"
                 android:drawablePadding="8dp"
                 android:hint="Имя пользователя"
@@ -52,7 +52,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:id="@+id/password"
-                android:background="@drawable/custom_card_diff_3"
+                android:background="@drawable/custom_edittext_bkg"
                 android:drawableLeft="@drawable/lock_svgrepo_com"
                 android:drawablePadding="8dp"
                 android:hint="Пароль"

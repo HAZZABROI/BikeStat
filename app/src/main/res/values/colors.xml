@@ -9,4 +9,5 @@
     <color name="greenSecond">#92CD67</color>
     <color name="yellow">#DFCB14</color>
     <color name="yellowSecond">#D1C667</color>
+    <color name="grey">#D1D1D1</color>
 </resources>
