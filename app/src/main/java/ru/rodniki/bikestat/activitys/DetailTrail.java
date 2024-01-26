@@ -2,6 +2,7 @@ package ru.rodniki.bikestat.activitys;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -17,6 +18,8 @@ public class DetailTrail extends AppCompatActivity {
             totalTimeT, textMapT, textGraphT;
 
     CardView cardMap;
+
+    ConstraintLayout layoutBack;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +38,16 @@ public class DetailTrail extends AppCompatActivity {
         textGraphT = findViewById(R.id.textGraph);
 
         cardMap = findViewById(R.id.cardMap);
+
+        layoutBack = findViewById(R.id.layoutBack);
+
+        layoutBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(DetailTrail.this, MainActivity.class);
+                startActivity(intent);
+            }
+        });
 
         getIntentExtras(intent);
         setTextInfo();
