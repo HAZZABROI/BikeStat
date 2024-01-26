@@ -20,12 +20,12 @@
         <item>1234694</item>
     </string-array>
 
-    <string-array name="trail_timeTotalWeek">
-        <item>01:45:24</item>
-    </string-array>
-
-    <string-array name="trail_distanceTotalWeek">
-        <item>25</item>
+    <string-array name="trail_kkal">
+        <item>123</item>
+        <item>78</item>
+        <item>124</item>
+        <item>78</item>
+        <item>98</item>
     </string-array>
 
     <string-array name="trail_timeTotal">
@@ -52,20 +52,20 @@
         <item>2024-02-25</item>
     </string-array>
 
-    <integer-array name="trail_avgBPM">
+    <string-array name="trail_avgBPM">
         <item>78</item>
         <item>89</item>
         <item>99</item>
         <item>99</item>
         <item>99</item>
-    </integer-array>
+    </string-array>
 
-    <integer-array name="trail_avgVelocity">
+    <string-array name="trail_avgVelocity">
         <item>33</item>
         <item>22</item>
         <item>16</item>
         <item>16</item>
         <item>16</item>
-    </integer-array>
+    </string-array>
 
 </resources>

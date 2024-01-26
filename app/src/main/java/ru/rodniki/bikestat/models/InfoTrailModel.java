@@ -3,14 +3,15 @@ package ru.rodniki.bikestat.models;
 public class InfoTrailModel {
     String timeStart;
     String timeTotal;
-    int avgBPM;
-    int avgVelocity;
+    String avgBPM;
+    String avgVelocity;
     String totalRange;
     String dateStart;
     String id;
+    String kkal;
 
 
-    public InfoTrailModel(String timeStart, String timeTotal, int avgBPM, int avgVelocity, String totalRange, String dateStart, String id) {
+    public InfoTrailModel(String timeStart, String timeTotal, String avgBPM, String avgVelocity, String totalRange, String dateStart, String id, String kkal) {
         this.timeStart = timeStart;
         this.timeTotal = timeTotal;
         this.avgBPM = avgBPM;
@@ -18,6 +19,7 @@ public class InfoTrailModel {
         this.totalRange = totalRange;
         this.dateStart = dateStart;
         this.id = id;
+        this.kkal = kkal;
     }
 
 
@@ -30,11 +32,11 @@ public class InfoTrailModel {
     }
 
 
-    public int getAvgBPM() {
+    public String getAvgBPM() {
         return avgBPM;
     }
 
-    public int getAvgVelocity() {
+    public String getAvgVelocity() {
         return avgVelocity;
     }
 
@@ -51,11 +53,11 @@ public class InfoTrailModel {
     }
 
 
-    public void setAvgBPM(int avgBPM) {
+    public void setAvgBPM(String avgBPM) {
         this.avgBPM = avgBPM;
     }
 
-    public void setAvgVelocity(int avgVelocity) {
+    public void setAvgVelocity(String avgVelocity) {
         this.avgVelocity = avgVelocity;
     }
 
@@ -77,5 +79,13 @@ public class InfoTrailModel {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getKkal() {
+        return kkal;
+    }
+
+    public void setKkal(String kkal) {
+        this.kkal = kkal;
     }
 }

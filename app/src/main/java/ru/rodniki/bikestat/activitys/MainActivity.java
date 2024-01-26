@@ -38,14 +38,16 @@ public class MainActivity extends AppCompatActivity {
         String[] infoTrailDateStart = getResources().getStringArray(R.array.trail_dateStart);
 
         String[] infoTrailID = getResources().getStringArray(R.array.trail_ids);
-        int[] infoTrailAvgBPM = getResources().getIntArray(R.array.trail_avgBPM);
-        int[] infoTrailAvgVelocity = getResources().getIntArray(R.array.trail_avgVelocity);
+        String[] infoTrailAvgBPM = getResources().getStringArray(R.array.trail_avgBPM);
+        String[] infoTrailAvgVelocity = getResources().getStringArray(R.array.trail_avgVelocity);
+        String[] infoTrailKkal = getResources().getStringArray(R.array.trail_kkal);
 
 
         for (int i = 0; i < infoTrailTimeStart.length; i++){
             infoTrailModels.add(new InfoTrailModel(infoTrailTimeStart[i],
                     infoTrailTimeTotal[i], infoTrailAvgBPM[i],
-                    infoTrailAvgVelocity[i], infoTrailTotalRange[i], infoTrailDateStart[i], infoTrailID[i]));
+                    infoTrailAvgVelocity[i], infoTrailTotalRange[i], infoTrailDateStart[i], infoTrailID[i], infoTrailKkal[i]));
         }
+
     }
 }
