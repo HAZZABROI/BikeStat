@@ -1,6 +1,7 @@
 package ru.rodniki.bikestat.activitys;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
@@ -11,18 +12,18 @@ import android.widget.TextView;
 
 import ru.rodniki.bikestat.R;
 
-public class DetailTrail extends AppCompatActivity {
+public class DetailTrailActivity extends AppCompatActivity {
 
     String totalTime, totalDistance, avgBPM, kkal, avgVelocity, startDate;
     TextView startDateT, avgVelocityT, kkalT, avgBPMT, totalDistanceT,
             totalTimeT, textMapT, textGraphT;
-
     CardView cardMap;
-
     ConstraintLayout layoutBack;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail_trail);
         Intent intent = getIntent();
@@ -44,7 +45,7 @@ public class DetailTrail extends AppCompatActivity {
         layoutBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(DetailTrail.this, MainActivity.class);
+                Intent intent = new Intent(DetailTrailActivity.this, MainActivity.class);
                 startActivity(intent);
             }
         });

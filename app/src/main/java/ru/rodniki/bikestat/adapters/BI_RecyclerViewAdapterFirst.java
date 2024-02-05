@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 
 import ru.rodniki.bikestat.R;
-import ru.rodniki.bikestat.activitys.DetailTrail;
+import ru.rodniki.bikestat.activitys.DetailTrailActivity;
 import ru.rodniki.bikestat.models.InfoTrailModel;
 
 
@@ -48,7 +48,7 @@ public class BI_RecyclerViewAdapterFirst extends RecyclerView.Adapter<RecyclerVi
         ((NormalViewHolder) holder).cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(context, DetailTrail.class);
+                Intent intent = new Intent(context, DetailTrailActivity.class);
                 //TODO: Implement id's system
                 intent.putExtra("totalTime",infoTrailModels.get(pos).getTimeTotal());
                 intent.putExtra("totalDistance",infoTrailModels.get(pos).getTotalRange());

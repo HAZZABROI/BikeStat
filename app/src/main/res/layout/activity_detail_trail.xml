@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activitys.DetailTrail">
+    tools:context=".activitys.DetailTrailActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/layoutBack"
@@ -61,7 +61,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
-                android:layout_marginTop="30dp"
                 android:layout_marginBottom="10dp"
                 android:text="Информация о поездке"
                 android:textColor="#000000"
@@ -182,11 +181,11 @@
                         android:id="@+id/textView2"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="110dp"
                         android:layout_marginTop="7dp"
+                        android:layout_marginEnd="60dp"
                         android:text="Расстояние"
                         android:textSize="12sp"
-                        app:layout_constraintStart_toEndOf="@+id/textView3"
+                        app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/textView" />
 
                     <TextView
