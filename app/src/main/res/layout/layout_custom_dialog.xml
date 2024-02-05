@@ -4,6 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginStart="30dp"
+    android:layout_marginEnd="30dp"
     android:background="#00FFFFFF"
     app:cardCornerRadius="30dp">
 
@@ -13,12 +15,14 @@
 
         <EditText
             android:id="@+id/ETFrom"
-            android:layout_width="300dp"
+            android:layout_width="0dp"
             android:layout_height="50dp"
+            android:layout_marginStart="40dp"
             android:layout_marginTop="32dp"
+            android:layout_marginEnd="40dp"
             android:background="@drawable/custom_edittext_bkg"
             android:ems="10"
-            android:hint="Введите адрес отправления"
+            android:hint="Адрес отправления"
             android:inputType="text"
             android:padding="8dp"
             android:textColor="@color/black"
@@ -44,12 +48,14 @@
 
         <EditText
             android:id="@+id/ETDist"
-            android:layout_width="300dp"
+            android:layout_width="0dp"
             android:layout_height="50dp"
+            android:layout_marginStart="40dp"
             android:layout_marginTop="16dp"
+            android:layout_marginEnd="40dp"
             android:background="@drawable/custom_edittext_bkg"
             android:ems="10"
-            android:hint="Введите адрес прибытия"
+            android:hint="Адрес прибытия"
             android:inputType="text"
             android:padding="8dp"
             android:textColor="@color/black"

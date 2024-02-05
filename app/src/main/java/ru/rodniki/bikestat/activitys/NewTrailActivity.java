@@ -142,11 +142,9 @@ public class NewTrailActivity extends AppCompatActivity implements UserLocationO
     protected void onCreate(Bundle savedInstanceState) {
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         super.onCreate(savedInstanceState);
-
         MapKitFactory.setApiKey(BuildConfig.MAPKIT_API_KEY);
         MapKitFactory.initialize(this);
         setContentView(R.layout.activity_new_trail);
-
         requestLocationPermission();
         MapKit mapKit = MapKitFactory.getInstance();
         mapKit.resetLocationManagerToDefault();
@@ -162,14 +160,16 @@ public class NewTrailActivity extends AppCompatActivity implements UserLocationO
         close = findViewById(R.id.closeBtn);
         ViewMapCard = findViewById(R.id.ViewMapCard);
         configBtn = findViewById(R.id.configRoute);
-        dialogContinue = dialog.findViewById(R.id.btnDialog);
-        editTextFrom = dialog.findViewById(R.id.ETFrom);
-        editTextDist = dialog.findViewById(R.id.ETDist);
 
         dialog = new Dialog(NewTrailActivity.this);
         dialog.setContentView(R.layout.layout_custom_dialog);
-        dialog.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT,ViewGroup.LayoutParams.WRAP_CONTENT);
+        dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT);
         dialog.setCancelable(false);
+        dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+
+        dialogContinue = dialog.findViewById(R.id.btnDialog);
+        editTextFrom = dialog.findViewById(R.id.ETFrom);
+        editTextDist = dialog.findViewById(R.id.ETDist);
 
         SearchFactory.initialize(this);
         searchManager = SearchFactory.getInstance().createSearchManager(SearchManagerType.ONLINE);
