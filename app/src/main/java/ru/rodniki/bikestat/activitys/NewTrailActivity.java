@@ -88,7 +88,7 @@ public class NewTrailActivity extends AppCompatActivity implements UserLocationO
     ConstraintLayout layout;
     ImageView close;
     Dialog dialog;
-    Button dialogContinue, configBtn;
+    Button dialogContinue, configBtn, scheduleRoute;
     CardView ViewMapCard;
     EditText editTextFrom, editTextDist;
     UserLocationLayer locationMapKit;
@@ -100,6 +100,8 @@ public class NewTrailActivity extends AppCompatActivity implements UserLocationO
     BicycleRouter bicycleRouter;
     ScrollView scrollView;
     ImageView transparentImage;
+    MaterialTimePicker pickerTime;
+    MaterialDatePicker<Long> pickerDate;
     com.yandex.mapkit.transport.bicycle.Session drivingSession;
 
 
@@ -133,6 +135,7 @@ public class NewTrailActivity extends AppCompatActivity implements UserLocationO
         totalDistance = findViewById(R.id.totalDistance);
         scrollView = findViewById(R.id.scrollView);
         transparentImage = findViewById(R.id.transparent_image);
+        scheduleRoute = findViewById(R.id.scheduleRoute);
 
         dialog = new Dialog(NewTrailActivity.this);
         dialog.setContentView(R.layout.layout_custom_dialog);
@@ -148,6 +151,7 @@ public class NewTrailActivity extends AppCompatActivity implements UserLocationO
         searchManager = SearchFactory.getInstance().createSearchManager(SearchManagerType.ONLINE);
         mapView.getMap().addCameraListener(this);
         mapView.getMap().setRotateGesturesEnabled(false);
+        mapView.getMap().setTiltGesturesEnabled(false);
         bicycleRouter = TransportFactory.getInstance().createBicycleRouter();
 
         arrayList = new ArrayList<>();
@@ -173,6 +177,12 @@ public class NewTrailActivity extends AppCompatActivity implements UserLocationO
                     default:
                         return true;
                 }
+            }
+        });
+        scheduleRoute.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
             }
         });
         configBtn.setOnClickListener(new View.OnClickListener() {
@@ -235,14 +245,14 @@ public class NewTrailActivity extends AppCompatActivity implements UserLocationO
     }
 
     private void openTimePicker(){
-        MaterialTimePicker picker = new MaterialTimePicker.Builder().setHour(12).setMinute(0).setTitleText("Выбрать время поездки").build();
-        picker.show(fm, "TAG");
+        pickerTime = new MaterialTimePicker.Builder().setHour(12).setMinute(0).setTitleText("Выбрать время поездки").build();
+        pickerTime.show(fm, "TAG");
     }
     private void openDatePicker(){
         MaterialDatePicker.Builder<Long> builder = MaterialDatePicker.Builder.datePicker();
         builder.setTitleText("Выбрать дату поездки");
-        MaterialDatePicker<Long> picker = builder.build();
-        picker.show(fm, picker.toString());
+        pickerDate = builder.build();
+        pickerDate.show(fm, pickerDate.toString());
     }
 
     @Override
