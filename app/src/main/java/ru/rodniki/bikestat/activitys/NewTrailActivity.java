@@ -1,8 +1,5 @@
 package ru.rodniki.bikestat.activitys;
 
-import static java.lang.System.in;
-import static java.security.AccessController.getContext;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
@@ -10,35 +7,29 @@ import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
+
 import androidx.fragment.app.FragmentManager;
 
 import android.animation.LayoutTransition;
+import android.annotation.SuppressLint;
 import android.app.Dialog;
-import android.app.TimePickerDialog;
+
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.PointF;
 import android.os.Bundle;
-import android.renderscript.ScriptGroup;
-import android.text.format.DateFormat;
-import android.transition.AutoTransition;
-import android.transition.TransitionManager;
-import android.util.Log;
+
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.TimePicker;
+import android.widget.ScrollView;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.timepicker.MaterialTimePicker;
 import com.yandex.mapkit.Animation;
@@ -48,28 +39,18 @@ import com.yandex.mapkit.RequestPoint;
 import com.yandex.mapkit.RequestPointType;
 import com.yandex.mapkit.ScreenPoint;
 import com.yandex.mapkit.ScreenRect;
-import com.yandex.mapkit.directions.DirectionsFactory;
-import com.yandex.mapkit.directions.driving.DrivingOptions;
-import com.yandex.mapkit.directions.driving.DrivingRoute;
-import com.yandex.mapkit.directions.driving.DrivingRouter;
-import com.yandex.mapkit.directions.driving.DrivingRouterType;
-import com.yandex.mapkit.directions.driving.DrivingSession;
-import com.yandex.mapkit.directions.driving.VehicleOptions;
-import com.yandex.mapkit.geometry.BoundingBox;
-import com.yandex.mapkit.geometry.BoundingBoxHelper;
+
 import com.yandex.mapkit.geometry.Geometry;
 import com.yandex.mapkit.geometry.Point;
 import com.yandex.mapkit.layers.ObjectEvent;
-import com.yandex.mapkit.map.BaseMapObjectCollection;
+
 import com.yandex.mapkit.map.CameraListener;
 import com.yandex.mapkit.map.CameraPosition;
 import com.yandex.mapkit.map.CameraUpdateReason;
-import com.yandex.mapkit.map.CompositeIcon;
-import com.yandex.mapkit.map.IconStyle;
+
 import com.yandex.mapkit.map.Map;
 import com.yandex.mapkit.map.MapObjectCollection;
 import com.yandex.mapkit.map.PolylineMapObject;
-import com.yandex.mapkit.map.RotationType;
 import com.yandex.mapkit.map.VisibleRegionUtils;
 import com.yandex.mapkit.mapview.MapView;
 import com.yandex.mapkit.search.Response;
@@ -82,6 +63,7 @@ import com.yandex.mapkit.transport.TransportFactory;
 import com.yandex.mapkit.transport.bicycle.BicycleRouter;
 import com.yandex.mapkit.transport.bicycle.Route;
 import com.yandex.mapkit.transport.bicycle.VehicleType;
+import com.yandex.mapkit.transport.bicycle.Weight;
 import com.yandex.mapkit.user_location.UserLocationLayer;
 import com.yandex.mapkit.user_location.UserLocationObjectListener;
 import com.yandex.mapkit.user_location.UserLocationView;
@@ -90,34 +72,19 @@ import com.yandex.runtime.image.ImageProvider;
 import com.yandex.runtime.network.NetworkError;
 import com.yandex.runtime.network.RemoteError;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.reactivex.SingleObserver;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
-import retrofit2.Retrofit;
-import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
-import retrofit2.converter.gson.GsonConverterFactory;
-
-import ru.dgis.sdk.Context;
-import ru.dgis.sdk.DGis;
-import ru.dgis.sdk.KeyFromString;
-import ru.dgis.sdk.KeySource;
 import ru.rodniki.bikestat.BuildConfig;
 import ru.rodniki.bikestat.R;
 
-import ru.rodniki.bikestat.interfaces.ApiInterface;
-import ru.rodniki.bikestat.map.Result;
 
 public class NewTrailActivity extends AppCompatActivity implements UserLocationObjectListener, Session.SearchListener, CameraListener, com.yandex.mapkit.transport.bicycle.Session.RouteListener {
     private static final int PERMISSIONS_REQUEST_FINE_LOCATION = 1;
     private MapView mapView;
     CardView cardTime, cardDate;
     FragmentManager fm;
-    ConstraintLayout backLayout;
+    CardView backLayout;
     ConstraintLayout layout;
     ImageView close;
     Dialog dialog;
@@ -125,12 +92,14 @@ public class NewTrailActivity extends AppCompatActivity implements UserLocationO
     CardView ViewMapCard;
     EditText editTextFrom, editTextDist;
     UserLocationLayer locationMapKit;
-
+    TextView totalTime, totalDistance;
     SearchManager searchManager;
     Session session;
     MapObjectCollection mapObjectCollection;
     ArrayList<Point> arrayList;
     BicycleRouter bicycleRouter;
+    ScrollView scrollView;
+    ImageView transparentImage;
     com.yandex.mapkit.transport.bicycle.Session drivingSession;
 
 
@@ -148,7 +117,7 @@ public class NewTrailActivity extends AppCompatActivity implements UserLocationO
         requestLocationPermission();
         MapKit mapKit = MapKitFactory.getInstance();
         mapKit.resetLocationManagerToDefault();
-
+//      TODO: Create sticky button at bottom of the screen
         fm = this.getSupportFragmentManager();
 
         mapView = findViewById(R.id.mapView);
@@ -160,6 +129,10 @@ public class NewTrailActivity extends AppCompatActivity implements UserLocationO
         close = findViewById(R.id.closeBtn);
         ViewMapCard = findViewById(R.id.ViewMapCard);
         configBtn = findViewById(R.id.configRoute);
+        totalTime = findViewById(R.id.totalTime);
+        totalDistance = findViewById(R.id.totalDistance);
+        scrollView = findViewById(R.id.scrollView);
+        transparentImage = findViewById(R.id.transparent_image);
 
         dialog = new Dialog(NewTrailActivity.this);
         dialog.setContentView(R.layout.layout_custom_dialog);
@@ -179,6 +152,29 @@ public class NewTrailActivity extends AppCompatActivity implements UserLocationO
 
         arrayList = new ArrayList<>();
 
+
+        transparentImage.setOnTouchListener(new View.OnTouchListener(){
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                int action = event.getAction();
+                switch (action) {
+                    case MotionEvent.ACTION_DOWN:
+                        scrollView.requestDisallowInterceptTouchEvent(true);
+                        return false;
+
+                    case MotionEvent.ACTION_UP:
+                        scrollView.requestDisallowInterceptTouchEvent(false);
+                        return true;
+
+                    case MotionEvent.ACTION_MOVE:
+                        scrollView.requestDisallowInterceptTouchEvent(true);
+                        return false;
+
+                    default:
+                        return true;
+                }
+            }
+        });
         configBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -326,6 +322,9 @@ public class NewTrailActivity extends AppCompatActivity implements UserLocationO
 
     @Override
     public void onBicycleRoutes(@NonNull List<Route> list) {
+        Weight weight = list.get(0).getWeight();
+        totalTime.setText(weight.getTime().getText());
+        totalDistance.setText(weight.getDistance().getText());
         PolylineMapObject line = mapObjectCollection.addPolyline(list.get(0).getGeometry());
         Geometry polyGeo = Geometry.fromPolyline(line.getGeometry());
         ScreenRect screenRect = new ScreenRect(
