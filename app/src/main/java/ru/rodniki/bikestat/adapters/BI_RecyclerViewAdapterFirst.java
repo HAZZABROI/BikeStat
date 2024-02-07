@@ -15,18 +15,18 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 
 import ru.rodniki.bikestat.R;
+import ru.rodniki.bikestat.models.RouteRealm;
 import ru.rodniki.bikestat.activitys.DetailTrailActivity;
-import ru.rodniki.bikestat.models.InfoTrailModel;
 
 
 public class BI_RecyclerViewAdapterFirst extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
 
     private Context context;
-    private ArrayList<InfoTrailModel> infoTrailModels;
+    private ArrayList<RouteRealm> infoTrailModels;
 
 
-    public BI_RecyclerViewAdapterFirst(Context context, ArrayList<InfoTrailModel> infoTrailModels) {
+    public BI_RecyclerViewAdapterFirst(Context context, ArrayList<RouteRealm> infoTrailModels) {
         this.context = context;
         this.infoTrailModels = infoTrailModels;
 
@@ -51,7 +51,7 @@ public class BI_RecyclerViewAdapterFirst extends RecyclerView.Adapter<RecyclerVi
                 Intent intent = new Intent(context, DetailTrailActivity.class);
                 //TODO: Implement id's system
                 intent.putExtra("totalTime",infoTrailModels.get(pos).getTimeTotal());
-                intent.putExtra("totalDistance",infoTrailModels.get(pos).getTotalRange());
+                intent.putExtra("totalDistance",infoTrailModels.get(pos).getDistanceTotal());
                 intent.putExtra("avgBPM",infoTrailModels.get(pos).getAvgBPM());
                 intent.putExtra("kkal",infoTrailModels.get(pos).getKkal());
                 intent.putExtra("avgVelocity",infoTrailModels.get(pos).getAvgVelocity());

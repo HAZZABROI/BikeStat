@@ -14,20 +14,26 @@ import android.widget.TimePicker;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
+import java.util.List;
 
+import io.realm.Realm;
 import ru.rodniki.bikestat.R;
+import ru.rodniki.bikestat.models.RouteRealm;
 import ru.rodniki.bikestat.adapters.BI_RecyclerViewAdapterFirst;
-import ru.rodniki.bikestat.models.InfoTrailModel;
 
 public class MainActivity extends AppCompatActivity implements TimePickerDialog.OnTimeSetListener{
 
-    ArrayList<InfoTrailModel> infoTrailModels = new ArrayList<>();
-
+    ArrayList<RouteRealm> RouteRealm = new ArrayList<>();
+    Realm uiThreadRealm;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        Realm.init(this);
+
+        uiThreadRealm = Realm.getDefaultInstance();
 
         RecyclerView recyclerViewFirst = findViewById(R.id.mRecyclerViewFirst);
 
@@ -43,37 +49,30 @@ public class MainActivity extends AppCompatActivity implements TimePickerDialog.
 
         setUpInfoTrailModels();
 
-        BI_RecyclerViewAdapterFirst adapter = new BI_RecyclerViewAdapterFirst(this, infoTrailModels);
+        BI_RecyclerViewAdapterFirst adapter = new BI_RecyclerViewAdapterFirst(this, RouteRealm);
 
         recyclerViewFirst.setAdapter(adapter);
         recyclerViewFirst.setLayoutManager(new LinearLayoutManager(this));
 
     }
 
-
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        uiThreadRealm.close();
+    }
 
     private  void setUpInfoTrailModels(){
-        String[] infoTrailTimeStart = getResources().getStringArray(R.array.trail_timeStart);
-        String[] infoTrailTimeTotal = getResources().getStringArray(R.array.trail_timeTotal);
-        String[] infoTrailTotalRange = getResources().getStringArray(R.array.trail_totalRange);
-        String[] infoTrailDateStart = getResources().getStringArray(R.array.trail_dateStart);
-
-        String[] infoTrailID = getResources().getStringArray(R.array.trail_ids);
-        String[] infoTrailAvgBPM = getResources().getStringArray(R.array.trail_avgBPM);
-        String[] infoTrailAvgVelocity = getResources().getStringArray(R.array.trail_avgVelocity);
-        String[] infoTrailKkal = getResources().getStringArray(R.array.trail_kkal);
-
-
-        for (int i = 0; i < infoTrailTimeStart.length; i++){
-            infoTrailModels.add(new InfoTrailModel(infoTrailTimeStart[i],
-                    infoTrailTimeTotal[i], infoTrailAvgBPM[i],
-                    infoTrailAvgVelocity[i], infoTrailTotalRange[i], infoTrailDateStart[i], infoTrailID[i], infoTrailKkal[i]));
+        List<RouteRealm> routeRealmList = uiThreadRealm.where(RouteRealm.class).findAll();
+        for (RouteRealm i : routeRealmList){
+            RouteRealm.add(new RouteRealm(i.getTimeStart(), i.getKkal(), i.getTimeTotal(),
+                    i.getDateStart(), i.getAvgBPM(), i.getAvgVelocity(), i.getMapURI(), i.getDistanceTotal()));
         }
-
     }
 
     @Override
     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
 
     }
+
 }

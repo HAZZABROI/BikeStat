@@ -1,8 +1,10 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
+    id 'org.jetbrains.kotlin.kapt'
 }
 
+apply plugin: "realm-android"
 android {
     namespace 'ru.rodniki.bikestat'
     compileSdk 34
@@ -48,7 +50,9 @@ android {
         }
     }
 }
-
+realm {
+    syncEnabled = true
+}
 dependencies {
 
     implementation 'androidx.appcompat:appcompat:1.6.1'

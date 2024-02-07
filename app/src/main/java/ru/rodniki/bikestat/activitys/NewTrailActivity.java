@@ -64,6 +64,7 @@ import com.yandex.mapkit.transport.bicycle.BicycleRouter;
 import com.yandex.mapkit.transport.bicycle.Route;
 import com.yandex.mapkit.transport.bicycle.VehicleType;
 import com.yandex.mapkit.transport.bicycle.Weight;
+import com.yandex.mapkit.uri.UriObjectMetadata;
 import com.yandex.mapkit.user_location.UserLocationLayer;
 import com.yandex.mapkit.user_location.UserLocationObjectListener;
 import com.yandex.mapkit.user_location.UserLocationView;
@@ -75,8 +76,10 @@ import com.yandex.runtime.network.RemoteError;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.realm.Realm;
 import ru.rodniki.bikestat.BuildConfig;
 import ru.rodniki.bikestat.R;
+import ru.rodniki.bikestat.models.RouteRealm;
 
 
 public class NewTrailActivity extends AppCompatActivity implements UserLocationObjectListener, Session.SearchListener, CameraListener, com.yandex.mapkit.transport.bicycle.Session.RouteListener {
@@ -102,6 +105,10 @@ public class NewTrailActivity extends AppCompatActivity implements UserLocationO
     ImageView transparentImage;
     MaterialTimePicker pickerTime;
     MaterialDatePicker<Long> pickerDate;
+    Realm uiThreadRealm;
+    RouteRealm routeRealm;
+    Weight weight;
+    UriObjectMetadata uriRoute;
     com.yandex.mapkit.transport.bicycle.Session drivingSession;
 
 
@@ -155,34 +162,47 @@ public class NewTrailActivity extends AppCompatActivity implements UserLocationO
         bicycleRouter = TransportFactory.getInstance().createBicycleRouter();
 
         arrayList = new ArrayList<>();
+        routeRealm = new RouteRealm();
 
+        Realm.init(this);
+        uiThreadRealm = Realm.getDefaultInstance();
 
-        transparentImage.setOnTouchListener(new View.OnTouchListener(){
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                int action = event.getAction();
-                switch (action) {
-                    case MotionEvent.ACTION_DOWN:
-                        scrollView.requestDisallowInterceptTouchEvent(true);
-                        return false;
+        transparentImage.setOnTouchListener((v, event) -> {
+            int action = event.getAction();
+            switch (action) {
+                case MotionEvent.ACTION_DOWN:
+                    scrollView.requestDisallowInterceptTouchEvent(true);
+                    return false;
 
-                    case MotionEvent.ACTION_UP:
-                        scrollView.requestDisallowInterceptTouchEvent(false);
-                        return true;
+                case MotionEvent.ACTION_UP:
+                    scrollView.requestDisallowInterceptTouchEvent(false);
+                    return true;
 
-                    case MotionEvent.ACTION_MOVE:
-                        scrollView.requestDisallowInterceptTouchEvent(true);
-                        return false;
+                case MotionEvent.ACTION_MOVE:
+                    scrollView.requestDisallowInterceptTouchEvent(true);
+                    return false;
 
-                    default:
-                        return true;
-                }
+                default:
+                    return true;
             }
         });
         scheduleRoute.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                if (pickerTime != null && pickerDate != null){
+                    routeRealm.setTimeStart(pickerTime.getHour() + "ч. " + pickerTime.getMinute() + "мин.");
+                    routeRealm.setDateStart(pickerDate.getSelection().toString());
+                    routeRealm.setTimeTotal(weight.getTime().getText());
+                    routeRealm.setDistanceTotal(weight.getDistance().getText());
+                    routeRealm.setMapURI(uriRoute.getUris().get(0).getValue());
+                    uiThreadRealm.executeTransactionAsync(new Realm.Transaction() {
+                        @Override
+                        public void execute(Realm realm) {
+                            realm.copyToRealm(routeRealm);
+                            routeRealm = new RouteRealm();
+                        }
+                    });
+                }
             }
         });
         configBtn.setOnClickListener(new View.OnClickListener() {
@@ -253,6 +273,12 @@ public class NewTrailActivity extends AppCompatActivity implements UserLocationO
         builder.setTitleText("Выбрать дату поездки");
         pickerDate = builder.build();
         pickerDate.show(fm, pickerDate.toString());
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        uiThreadRealm.close();
     }
 
     @Override
@@ -332,7 +358,8 @@ public class NewTrailActivity extends AppCompatActivity implements UserLocationO
 
     @Override
     public void onBicycleRoutes(@NonNull List<Route> list) {
-        Weight weight = list.get(0).getWeight();
+        weight = list.get(0).getWeight();
+        uriRoute = list.get(0).getUriMetadata();
         totalTime.setText(weight.getTime().getText());
         totalDistance.setText(weight.getDistance().getText());
         PolylineMapObject line = mapObjectCollection.addPolyline(list.get(0).getGeometry());
