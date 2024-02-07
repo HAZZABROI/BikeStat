@@ -24,12 +24,13 @@ public class BI_RecyclerViewAdapterFirst extends RecyclerView.Adapter<RecyclerVi
 
     private Context context;
     private ArrayList<RouteRealm> infoTrailModels;
+    private Boolean initialized;
 
 
-    public BI_RecyclerViewAdapterFirst(Context context, ArrayList<RouteRealm> infoTrailModels) {
+    public BI_RecyclerViewAdapterFirst(Context context, ArrayList<RouteRealm> infoTrailModels, Boolean initialized) {
         this.context = context;
         this.infoTrailModels = infoTrailModels;
-
+        this.initialized = initialized;
     }
 
     @NonNull
@@ -56,6 +57,9 @@ public class BI_RecyclerViewAdapterFirst extends RecyclerView.Adapter<RecyclerVi
                 intent.putExtra("kkal",infoTrailModels.get(pos).getKkal());
                 intent.putExtra("avgVelocity",infoTrailModels.get(pos).getAvgVelocity());
                 intent.putExtra("startDate",infoTrailModels.get(pos).getDateStart());
+                intent.putExtra("mapURI",infoTrailModels.get(pos).getMapURI());
+                intent.putExtra("isInit",initialized);
+                initialized = true;
                 context.startActivity(intent);
             }
         });

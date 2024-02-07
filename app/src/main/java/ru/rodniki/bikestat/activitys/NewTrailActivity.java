@@ -80,6 +80,7 @@ import java.util.List;
 
 import io.realm.Realm;
 import ru.rodniki.bikestat.BuildConfig;
+import ru.rodniki.bikestat.MapKitInitializer;
 import ru.rodniki.bikestat.R;
 import ru.rodniki.bikestat.models.RouteRealm;
 
@@ -111,6 +112,7 @@ public class NewTrailActivity extends AppCompatActivity implements UserLocationO
     RouteRealm routeRealm;
     Weight weight;
     UriObjectMetadata uriRoute;
+    Boolean initialized;
     com.yandex.mapkit.transport.bicycle.Session drivingSession;
 
 
@@ -122,8 +124,10 @@ public class NewTrailActivity extends AppCompatActivity implements UserLocationO
     protected void onCreate(Bundle savedInstanceState) {
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         super.onCreate(savedInstanceState);
-        MapKitFactory.setApiKey(BuildConfig.MAPKIT_API_KEY);
-        MapKitFactory.initialize(this);
+        Intent intent = getIntent();
+        initialized = intent.getBooleanExtra("isInit", false);
+        MapKitInitializer mapKitInitializer = new MapKitInitializer();
+        mapKitInitializer.initializeMapKit(getApplicationContext(), initialized);
         setContentView(R.layout.activity_new_trail);
         requestLocationPermission();
         MapKit mapKit = MapKitFactory.getInstance();
@@ -204,6 +208,11 @@ public class NewTrailActivity extends AppCompatActivity implements UserLocationO
                             routeRealm = new RouteRealm();
                         }
                     });
+                    Intent intent = new Intent(NewTrailActivity.this, MainActivity.class);
+                    intent.putExtra("isInit", true);
+                    startActivity(intent);
+                }else {
+                    Toast.makeText(getApplicationContext(), "Вы должны ввести дату и время", Toast.LENGTH_LONG);
                 }
             }
         });
@@ -281,13 +290,6 @@ public class NewTrailActivity extends AppCompatActivity implements UserLocationO
     protected void onDestroy() {
         super.onDestroy();
         uiThreadRealm.close();
-    }
-
-    @Override
-    public void onWindowFocusChanged(boolean hasFocus) {
-        super.onWindowFocusChanged(hasFocus);
-        int height = layout.getHeight();
-        System.out.println(height);
     }
 
     @Override
