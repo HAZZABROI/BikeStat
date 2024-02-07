@@ -235,6 +235,7 @@ public class NewTrailActivity extends AppCompatActivity implements UserLocationO
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(NewTrailActivity.this, MainActivity.class);
+                intent.putExtra("isInit", true);
                 startActivity(intent);
             }
         });
