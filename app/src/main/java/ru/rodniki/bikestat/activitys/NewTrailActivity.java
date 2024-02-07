@@ -20,6 +20,7 @@ import android.graphics.Color;
 import android.graphics.PointF;
 import android.os.Bundle;
 
+import android.text.format.DateFormat;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -74,6 +75,7 @@ import com.yandex.runtime.network.NetworkError;
 import com.yandex.runtime.network.RemoteError;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import io.realm.Realm;
@@ -191,7 +193,7 @@ public class NewTrailActivity extends AppCompatActivity implements UserLocationO
             public void onClick(View v) {
                 if (pickerTime != null && pickerDate != null){
                     routeRealm.setTimeStart(pickerTime.getHour() + "ч. " + pickerTime.getMinute() + "мин.");
-                    routeRealm.setDateStart(pickerDate.getSelection().toString());
+                    routeRealm.setDateStart(DateFormat.format("dd/MM/yyyy", new Date(pickerDate.getSelection())).toString());
                     routeRealm.setTimeTotal(weight.getTime().getText());
                     routeRealm.setDistanceTotal(weight.getDistance().getText());
                     routeRealm.setMapURI(uriRoute.getUris().get(0).getValue());
