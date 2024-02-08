@@ -48,7 +48,7 @@ import ru.rodniki.bikestat.R;
 public class DetailTrailActivity extends AppCompatActivity implements UserLocationObjectListener, CameraListener, com.yandex.mapkit.transport.bicycle.Session.RouteListener {
 
     String totalTime, totalDistance, avgBPM, kkal, avgVelocity, startDate, mapURI;
-    TextView startDateT, avgVelocityT, kkalT, avgBPMT, totalDistanceT,
+    TextView startDateT, kkalT, avgBPMT, totalDistanceT,
             totalTimeT, textMapT, textGraphT;
     CardView cardMap;
     ConstraintLayout layoutBack;
@@ -70,7 +70,6 @@ public class DetailTrailActivity extends AppCompatActivity implements UserLocati
         setContentView(R.layout.activity_detail_trail);
         mapView = findViewById(R.id.mapView);
         startDateT = findViewById(R.id.dateStart);
-        avgVelocityT = findViewById(R.id.textAvgVelocity);
         kkalT = findViewById(R.id.totalKkal);
         avgBPMT = findViewById(R.id.textBPM);
         totalDistanceT = findViewById(R.id.totalDistance);
@@ -118,7 +117,6 @@ public class DetailTrailActivity extends AppCompatActivity implements UserLocati
 
     private void setTextInfo(){
         startDateT.setText(startDate);
-        avgVelocityT.setText(avgVelocity);
         kkalT.setText(kkal);
         avgBPMT.setText(avgBPM);
         totalDistanceT.setText(totalDistance);

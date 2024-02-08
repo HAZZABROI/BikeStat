@@ -11,7 +11,7 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentManager;
 
 import android.animation.LayoutTransition;
-import android.annotation.SuppressLint;
+
 import android.app.Dialog;
 
 import android.content.Intent;
@@ -79,7 +79,7 @@ import java.util.Date;
 import java.util.List;
 
 import io.realm.Realm;
-import ru.rodniki.bikestat.BuildConfig;
+
 import ru.rodniki.bikestat.MapKitInitializer;
 import ru.rodniki.bikestat.R;
 import ru.rodniki.bikestat.models.RouteRealm;
@@ -93,8 +93,8 @@ public class NewTrailActivity extends AppCompatActivity implements UserLocationO
     CardView backLayout;
     ConstraintLayout layout;
     ImageView close;
-    Dialog dialog;
-    Button dialogContinue, configBtn, scheduleRoute;
+    Dialog dialog, dialogNewRoute;
+    Button dialogContinue, configBtn, scheduleRoute, testStart, btnDialogYes, btnDialogNo;
     CardView ViewMapCard;
     EditText editTextFrom, editTextDist;
     UserLocationLayer locationMapKit;
@@ -113,6 +113,7 @@ public class NewTrailActivity extends AppCompatActivity implements UserLocationO
     Weight weight;
     UriObjectMetadata uriRoute;
     Boolean initialized;
+    String mapURI, timeStart, dateStart, distanceTotal, avgBPM, minBPM, maxBPM, timeTotalStr, kkal;
     com.yandex.mapkit.transport.bicycle.Session drivingSession;
 
 
@@ -125,14 +126,65 @@ public class NewTrailActivity extends AppCompatActivity implements UserLocationO
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         super.onCreate(savedInstanceState);
         Intent intent = getIntent();
+        routeRealm = new RouteRealm();
+        Realm.init(this);
+        uiThreadRealm = Realm.getDefaultInstance();
         initialized = intent.getBooleanExtra("isInit", false);
+        if (intent.getBooleanExtra("isNewRoute", false)){
+            mapURI = intent.getStringExtra("mapURI");
+            timeStart = intent.getStringExtra("timeStart");
+            dateStart = intent.getStringExtra("dateStart");
+            distanceTotal = intent.getStringExtra("distanceTotal");
+            avgBPM = intent.getStringExtra("avgBPM");
+            kkal = intent.getStringExtra("kkal");
+            minBPM = intent.getStringExtra("minBPM");
+            maxBPM = intent.getStringExtra("maxBPM");
+            timeTotalStr = intent.getStringExtra("timeTotal");
+            dialogNewRoute = new Dialog(NewTrailActivity.this);
+            dialogNewRoute.setContentView(R.layout.layoutcustom_dialog_new_route);
+            dialogNewRoute.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT);
+            dialogNewRoute.setCancelable(false);
+            dialogNewRoute.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+            dialogNewRoute.show();
+            btnDialogYes = dialogNewRoute.findViewById(R.id.btnDialogYes);
+            btnDialogNo = dialogNewRoute.findViewById(R.id.btnDialogNo);
+
+            btnDialogYes.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    routeRealm.setMapURI(mapURI);
+                    routeRealm.setTimeStart(timeStart);
+                    routeRealm.setDateStart(dateStart);
+                    routeRealm.setBPM(avgBPM);
+                    routeRealm.setKkal(kkal);
+                    routeRealm.setTimeTotal(timeTotalStr);
+                    routeRealm.setDistanceTotal(distanceTotal);
+                    routeRealm.setBPM(avgBPM + "/" + minBPM + "/" + maxBPM);
+                    uiThreadRealm.executeTransactionAsync(new Realm.Transaction() {
+                        @Override
+                        public void execute(Realm realm) {
+                            realm.copyToRealm(routeRealm);
+                            routeRealm = new RouteRealm();
+                        }
+                    });
+                    Intent intent2 = new Intent(NewTrailActivity.this, MainActivity.class);
+                    intent2.putExtra("isInit", true);
+                    startActivity(intent2);
+                }
+            });
+            btnDialogNo.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dialogNewRoute.dismiss();
+                }
+            });
+        }
         MapKitInitializer mapKitInitializer = new MapKitInitializer();
         mapKitInitializer.initializeMapKit(getApplicationContext(), initialized);
         setContentView(R.layout.activity_new_trail);
         requestLocationPermission();
         MapKit mapKit = MapKitFactory.getInstance();
         mapKit.resetLocationManagerToDefault();
-//      TODO: Create sticky button at bottom of the screen
         fm = this.getSupportFragmentManager();
 
         mapView = findViewById(R.id.mapView);
@@ -149,6 +201,7 @@ public class NewTrailActivity extends AppCompatActivity implements UserLocationO
         scrollView = findViewById(R.id.scrollView);
         transparentImage = findViewById(R.id.transparent_image);
         scheduleRoute = findViewById(R.id.scheduleRoute);
+        testStart = findViewById(R.id.testStart);
 
         dialog = new Dialog(NewTrailActivity.this);
         dialog.setContentView(R.layout.layout_custom_dialog);
@@ -168,11 +221,19 @@ public class NewTrailActivity extends AppCompatActivity implements UserLocationO
         bicycleRouter = TransportFactory.getInstance().createBicycleRouter();
 
         arrayList = new ArrayList<>();
-        routeRealm = new RouteRealm();
 
-        Realm.init(this);
-        uiThreadRealm = Realm.getDefaultInstance();
-
+        testStart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(NewTrailActivity.this, RouteGoing.class);
+                intent.putExtra("isInit", true);
+                intent.putExtra("mapURI", uriRoute.getUris().get(0).getValue());
+                intent.putExtra("timeStart", pickerTime.getHour() + "ч. " + pickerTime.getMinute() + "мин.");
+                intent.putExtra("dateStart", DateFormat.format("dd/MM/yyyy", new Date(pickerDate.getSelection())).toString());
+                intent.putExtra("distanceTotal", weight.getDistance().getText());
+                startActivity(intent);
+            }
+        });
         transparentImage.setOnTouchListener((v, event) -> {
             int action = event.getAction();
             switch (action) {

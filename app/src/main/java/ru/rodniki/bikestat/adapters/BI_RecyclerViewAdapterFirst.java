@@ -50,10 +50,9 @@ public class BI_RecyclerViewAdapterFirst extends RecyclerView.Adapter<RecyclerVi
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(context, DetailTrailActivity.class);
-                //TODO: Implement id's system
                 intent.putExtra("totalTime",infoTrailModels.get(pos).getTimeTotal());
                 intent.putExtra("totalDistance",infoTrailModels.get(pos).getDistanceTotal());
-                intent.putExtra("avgBPM",infoTrailModels.get(pos).getAvgBPM());
+                intent.putExtra("avgBPM",infoTrailModels.get(pos).getBPM());
                 intent.putExtra("kkal",infoTrailModels.get(pos).getKkal());
                 intent.putExtra("avgVelocity",infoTrailModels.get(pos).getAvgVelocity());
                 intent.putExtra("startDate",infoTrailModels.get(pos).getDateStart());

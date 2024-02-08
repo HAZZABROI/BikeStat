@@ -9,18 +9,18 @@ public class RouteRealm extends RealmObject {
     private String timeTotal;
     private String distanceTotal;
     private String dateStart;
-    private String avgBPM;
+    private String BPM;
     private String avgVelocity;
     @PrimaryKey
     private String mapURI;
 
 
-    public RouteRealm( String timeStart, String kkal, String timeTotal, String dateStart, String avgBPM, String avgVelocity, String mapURI, String distanceTotal) {
+    public RouteRealm( String timeStart, String kkal, String timeTotal, String dateStart, String BPM, String avgVelocity, String mapURI, String distanceTotal) {
         this.timeStart = timeStart;
         this.kkal = kkal;
         this.timeTotal = timeTotal;
         this.dateStart = dateStart;
-        this.avgBPM = avgBPM;
+        this.BPM = BPM;
         this.avgVelocity = avgVelocity;
         this.mapURI = mapURI;
         this.distanceTotal = distanceTotal;
@@ -61,12 +61,12 @@ public class RouteRealm extends RealmObject {
         this.dateStart = dateStart;
     }
 
-    public String getAvgBPM() {
-        return avgBPM;
+    public String getBPM() {
+        return BPM;
     }
 
-    public void setAvgBPM(String avgBPM) {
-        this.avgBPM = avgBPM;
+    public void setBPM(String BPM) {
+        this.BPM = BPM;
     }
 
     public String getAvgVelocity() {

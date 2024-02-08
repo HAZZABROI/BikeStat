@@ -43,10 +43,12 @@
                     android:id="@+id/dateStart"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
                     android:text="2024-01-23"
                     android:textColor="#000000"
                     android:textSize="16sp"
                     android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="@+id/textView18"
                     app:layout_constraintTop_toBottomOf="@+id/textView18" />
 
@@ -59,29 +61,6 @@
                     android:textSize="12sp"
                     app:layout_constraintStart_toStartOf="@+id/totalKkal"
                     app:layout_constraintTop_toBottomOf="@+id/totalKkal" />
-
-                <TextView
-                    android:id="@+id/textAvgVelocity"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="24dp"
-                    android:text="22 км/ч"
-                    android:textColor="#000000"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="@+id/textView10"
-                    app:layout_constraintTop_toBottomOf="@+id/textView10" />
-
-                <TextView
-                    android:id="@+id/textView10"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="24dp"
-                    android:text="ср. Скорость"
-                    android:textSize="12sp"
-                    app:layout_constraintStart_toStartOf="@+id/textBPM"
-                    app:layout_constraintTop_toBottomOf="@+id/textBPM" />
 
                 <TextView
                     android:id="@+id/totalKkal"
@@ -120,7 +99,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="24dp"
-                    android:text="Средний пульс"
+                    android:text="Пульс (ср./макс./мин.)"
                     android:textSize="12sp"
                     app:layout_constraintStart_toStartOf="@+id/totalTime"
                     app:layout_constraintTop_toBottomOf="@+id/totalTime" />
@@ -203,13 +182,14 @@
                     android:layout_width="0dp"
                     android:layout_height="200dp"
                     android:layout_margin="15dp"
+                    android:layout_marginTop="9dp"
                     android:backgroundTint="@color/white"
                     app:cardCornerRadius="30dp"
                     app:cardElevation="0dp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textGraph">
+                    app:layout_constraintTop_toBottomOf="@+id/textMap">
 
                     <TextView
                         android:id="@+id/textView17"
@@ -256,6 +236,7 @@
                     android:textColor="#000000"
                     android:textSize="20sp"
                     android:textStyle="bold"
+                    android:visibility="invisible"
                     app:layout_constraintBottom_toBottomOf="@+id/textMap"
                     app:layout_constraintStart_toEndOf="@+id/textMap" />
 

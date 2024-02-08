@@ -23,7 +23,6 @@ import java.sql.Statement;
 import java.util.concurrent.TimeUnit;
 
 import ru.rodniki.bikestat.R;
-import ru.rodniki.bikestat.database.ConnectionClass;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -40,7 +39,7 @@ public class LoginActivity extends AppCompatActivity {
     final int startTopMargin = 0;
     boolean isRegOpen = false;
 
-    ConnectionClass connectionClass;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,7 +55,6 @@ public class LoginActivity extends AppCompatActivity {
         loginText = findViewById(R.id.loginText);
         passLayout = findViewById(R.id.rePassLayout);
 
-        connectionClass = new ConnectionClass();
 
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -116,55 +114,6 @@ public class LoginActivity extends AppCompatActivity {
 
             }
         });
-    }
-
-    public class DoRegister extends AsyncTask<String,String,String>
-    {
-        String namestr = username.getText().toString();
-        String passstr = password.getText().toString();
-        String z = "";
-        boolean isSuccess = false;
-
-        @Override
-        protected void onPreExecute() {
-            Toast.makeText(LoginActivity.this, "Подождите...",Toast.LENGTH_SHORT).show();
-        }
-
-        @Override
-        protected String doInBackground(String... strings) {
-            if(namestr.trim().equals("") || passstr.trim().equals(""))
-                z = "Пожалуйста заполните все поля";
-            else{
-                try{
-                    Connection conn = connectionClass.CONN();
-                    if(conn == null){
-                        String query = "insert into users values('"+namestr+"','"+passstr+"')";
-
-                        Statement stmnt = conn.createStatement();
-                        stmnt.executeUpdate(query);
-
-                        z = "Регистрация успешна";
-                        isSuccess=true;
-                    }
-                }
-                catch (Exception ex)
-                {
-                    isSuccess = false;
-                    Log.e("Error",  ex.toString());
-                    z = "Неизвестная ошибка";
-                }
-            }
-            return z;
-        }
-
-        @Override
-        protected void onPostExecute(String s) {
-            if(isSuccess){
-                Toast.makeText(getBaseContext(),""+z, Toast.LENGTH_LONG).show();
-                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                startActivity(intent);
-            }
-        }
     }
 
     public Animation animCreate(int margin, boolean back) {
