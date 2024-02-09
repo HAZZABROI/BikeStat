@@ -2,6 +2,8 @@ package ru.rodniki.bikestat.adapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +11,8 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.content.res.AppCompatResources;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -46,6 +50,8 @@ public class BI_RecyclerViewAdapterFirst extends RecyclerView.Adapter<RecyclerVi
         int pos = position;
         ((NormalViewHolder) holder).timeStart.setText(infoTrailModels.get(pos).getTimeStart());
         ((NormalViewHolder) holder).timeTotal.setText(infoTrailModels.get(pos).getTimeTotal());
+
+        ((NormalViewHolder) holder).cardView.setBackground(AppCompatResources.getDrawable(context, getColor(infoTrailModels.get(pos).getDiffPre())));
         ((NormalViewHolder) holder).cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -58,18 +64,28 @@ public class BI_RecyclerViewAdapterFirst extends RecyclerView.Adapter<RecyclerVi
                 intent.putExtra("startDate",infoTrailModels.get(pos).getDateStart());
                 intent.putExtra("mapURI",infoTrailModels.get(pos).getMapURI());
                 intent.putExtra("diff",infoTrailModels.get(pos).getDiff());
+                intent.putExtra("diffPre",infoTrailModels.get(pos).getDiffPre());
                 intent.putExtra("isInit",initialized);
                 initialized = true;
                 context.startActivity(intent);
             }
         });
     }
-
+    
     @Override
     public int getItemCount() {
         return infoTrailModels.size();
     }
-
+    public int getColor(String diff){
+        if(diff.equals("легкий")){
+            return R.drawable.custom_card_diff_1;
+        } else if (diff.equals("средний")) {
+            return R.drawable.custom_card_diff_2;
+        } else if (diff.equals("сложный")) {
+            return R.drawable.custom_card_diff_3;
+        }
+        return 0;
+    }
     public static class NormalViewHolder extends RecyclerView.ViewHolder {
         TextView timeStart, timeTotal;
         CardView cardView;

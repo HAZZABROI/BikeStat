@@ -47,7 +47,7 @@ import ru.rodniki.bikestat.R;
 
 public class DetailTrailActivity extends AppCompatActivity implements UserLocationObjectListener, CameraListener, com.yandex.mapkit.transport.bicycle.Session.RouteListener {
 
-    String totalTime, totalDistance, avgBPM, kkal, avgVelocity, startDate, mapURI, diff;
+    String totalTime, totalDistance, avgBPM, kkal, avgVelocity, startDate, mapURI, diff, diffPre;
     TextView startDateT, kkalT, avgBPMT, totalDistanceT,
             totalTimeT, textMapT, textGraphT, textDiff;
     CardView cardMap;
@@ -121,7 +121,7 @@ public class DetailTrailActivity extends AppCompatActivity implements UserLocati
         avgBPMT.setText(avgBPM);
         totalDistanceT.setText(totalDistance);
         totalTimeT.setText(totalTime);
-        textDiff.setText(diff);
+        textDiff.setText(diffPre + "/" + diff);
     }
     private void getIntentExtras(Intent intent){
         totalTime = intent.getStringExtra("totalTime");
@@ -131,6 +131,7 @@ public class DetailTrailActivity extends AppCompatActivity implements UserLocati
         avgVelocity = intent.getStringExtra("avgVelocity");
         startDate = intent.getStringExtra("startDate");
         diff = intent.getStringExtra("diff");
+        diffPre = intent.getStringExtra("diffPre");
         mapURI = intent.getStringExtra("mapURI");
     }
 

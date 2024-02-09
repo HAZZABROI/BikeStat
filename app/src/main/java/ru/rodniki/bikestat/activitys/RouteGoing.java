@@ -26,6 +26,7 @@ import com.yandex.mapkit.ScreenPoint;
 import com.yandex.mapkit.ScreenRect;
 
 import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -64,6 +65,8 @@ import java.util.TimeZone;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
@@ -86,7 +89,7 @@ public class RouteGoing extends AppCompatActivity implements UserLocationObjectL
     MapView mapView;
     Boolean initialized;
     BicycleRouter bicycleRouter;
-    String mapURI, timeStart, dateStart, distanceTotal, diffStr, totalTime;
+    String mapURI, timeStart, dateStart, distanceTotal, diffStr, totalTime, distanceTotalMetr;
     MapObjectCollection mapObjectCollection;
     com.yandex.mapkit.transport.bicycle.Session drivingSession;
     String getUrl = "https://dt.miet.ru";
@@ -110,7 +113,7 @@ public class RouteGoing extends AppCompatActivity implements UserLocationObjectL
         OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
 
         httpClient.addInterceptor(logging);
-        initialized = intent.getBooleanExtra("isInit", false);
+        initialized = intent.getBooleanExtra("isInit",false);
         MapKitInitializer mapKitInitializer = new MapKitInitializer();
         mapKitInitializer.initializeMapKit(getApplicationContext(), initialized);
         setContentView(R.layout.activity_route_going);
@@ -118,6 +121,7 @@ public class RouteGoing extends AppCompatActivity implements UserLocationObjectL
         timeStart = intent.getStringExtra("timeStart");
         dateStart = intent.getStringExtra("dateStart");
         totalTime = intent.getStringExtra("totalTime");
+        distanceTotalMetr = intent.getStringExtra("distanceTotalMetr");
         distanceTotal = intent.getStringExtra("distanceTotal");
         requestLocationPermission();
         MapKit mapKit = MapKitFactory.getInstance();
@@ -170,24 +174,26 @@ public class RouteGoing extends AppCompatActivity implements UserLocationObjectL
             @Override
             public void onResponse(Call<bpmModel> call, Response<bpmModel> response) {
                 responseAll = response.body();
+                DecimalFormat df = new DecimalFormat("#.#");
                 Long time = System.currentTimeMillis() - startTime;
                 DateFormat formatter = new SimpleDateFormat("HH:mm:ss", Locale.US);
                 formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
                 String text = formatter.format(new Date(time));
                 System.out.println(responseAll.getData().getPulse().getAvg());
                 Intent intent2 = new Intent(RouteGoing.this, NewTrailActivity.class);
-                String kkal = String.valueOf(0.014 * 63.4 * (time/60000) * (0.12 * responseAll.getData().getPulse().getAvg()));
-                String distanceMetr = distanceTotal.replaceAll("\\D+", "");
-                String diff = getDiff(String.valueOf(time/6000), distanceMetr, responseAll.getData().getPulse().getAvg().toString());
-                String diffPre = getDiff(totalTime.replaceAll("\\D+", ""), distanceMetr, responseAll.getData().getPulse().getAvg().toString());
+                String kkal = df.format(0.014 * 63.4 * (time.floatValue()/60000) * (0.12 * responseAll.getData().getPulse().getAvg()));
+                String diff = getDiff(String.valueOf(time.floatValue()/60000), distanceTotalMetr, responseAll.getData().getPulse().getAvg().toString());
+                String diffPre = getDiff(String.valueOf(toTime(totalTime)), distanceTotalMetr, responseAll.getData().getPulse().getAvg().toString());
                 intent2.putExtra("isNewRoute", true);
                 intent2.putExtra("isInit", true);
                 intent2.putExtra("mapURI", mapURI);
                 intent2.putExtra("timeStart", timeStart);
                 intent2.putExtra("dateStart", dateStart);
                 intent2.putExtra("distanceTotal", distanceTotal);
+                intent2.putExtra("distanceTotalMetr", distanceTotalMetr);
                 intent2.putExtra("timeTotal", text);
-                intent2.putExtra("diff", diffPre+"/"+diff);
+                intent2.putExtra("diff", diff);
+                intent2.putExtra("diffPre", diffPre);
                 intent2.putExtra("kkal", kkal);
                 intent2.putExtra("avgBPM", responseAll.getData().getPulse().getAvg().toString());
                 intent2.putExtra("minBPM", responseAll.getData().getPulse().getMin().toString());
@@ -201,15 +207,44 @@ public class RouteGoing extends AppCompatActivity implements UserLocationObjectL
             }
         });
     }
+    public int toTime(String time){
+        Pattern pattern = Pattern.compile("(\\d+)\\s*(days?|hr|min)");
+        Matcher matcher = pattern.matcher(time);
 
+        int days = 0;
+        int hours = 0;
+        int minutes = 0;
+
+        while (matcher.find()) {
+            int value = Integer.parseInt(matcher.group(1));
+            String unit = matcher.group(2);
+
+            switch (unit) {
+                case "days":
+                    days = value;
+                    break;
+                case "hr":
+                    hours = value;
+                    break;
+                case "min":
+                    minutes = value;
+                    break;
+            }
+        }
+
+        int totalMinutes = days * 24 + hours + minutes / 60;;
+
+        return totalMinutes;
+    }
     public String getDiff(String time, String distance, String avgBPM){
-        k = (Float.parseFloat(avgBPM)*Float.parseFloat(time))/Float.parseFloat(distance);
-        if(k < Float.parseFloat(avgBPM)){
+        k = (Float.parseFloat(avgBPM)*Float.parseFloat(time))/(Float.parseFloat(distance));
+        System.out.println(k);
+        if(k < 0.003){
             diffStr = "легкий";
-        } else if (k > Float.parseFloat(avgBPM)) {
-            diffStr = "сложный";
-        } else if (k >= Float.parseFloat(avgBPM) + 15 && k <= (Float.parseFloat(avgBPM) - 15)) {
+        } else if (k < 0.02) {
             diffStr = "средний";
+        } else {
+            diffStr = "сложный";
         }
         return diffStr;
     }

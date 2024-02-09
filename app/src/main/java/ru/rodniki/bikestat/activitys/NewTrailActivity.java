@@ -113,7 +113,7 @@ public class NewTrailActivity extends AppCompatActivity implements UserLocationO
     Weight weight;
     UriObjectMetadata uriRoute;
     Boolean initialized;
-    String mapURI, timeStart, dateStart, distanceTotal, avgBPM, minBPM, maxBPM, timeTotalStr, kkal, diff;
+    String mapURI, timeStart, dateStart, distanceTotal, avgBPM, minBPM, maxBPM, timeTotalStr, kkal, diff, diffPre, distanceTotalMetr;
     com.yandex.mapkit.transport.bicycle.Session drivingSession;
 
 
@@ -138,8 +138,10 @@ public class NewTrailActivity extends AppCompatActivity implements UserLocationO
             avgBPM = intent.getStringExtra("avgBPM");
             kkal = intent.getStringExtra("kkal");
             minBPM = intent.getStringExtra("minBPM");
+            distanceTotalMetr = intent.getStringExtra("distanceTotalMetr");
             maxBPM = intent.getStringExtra("maxBPM");
             diff = intent.getStringExtra("diff");
+            diffPre = intent.getStringExtra("diffPre");
             timeTotalStr = intent.getStringExtra("timeTotal");
             dialogNewRoute = new Dialog(NewTrailActivity.this);
             dialogNewRoute.setContentView(R.layout.layoutcustom_dialog_new_route);
@@ -158,10 +160,13 @@ public class NewTrailActivity extends AppCompatActivity implements UserLocationO
                     routeRealm.setDateStart(dateStart);
                     routeRealm.setBPM(avgBPM);
                     routeRealm.setDiff(diff);
+                    routeRealm.setDiffPre(diffPre);
+                    routeRealm.setDistanceTotalMetr(distanceTotalMetr);
                     routeRealm.setKkal(kkal);
                     routeRealm.setTimeTotal(timeTotalStr);
                     routeRealm.setDistanceTotal(distanceTotal);
                     routeRealm.setBPM(avgBPM + "/" + minBPM + "/" + maxBPM);
+                    uiThreadRealm.close();
                     uiThreadRealm.executeTransactionAsync(new Realm.Transaction() {
                         @Override
                         public void execute(Realm realm) {
@@ -178,11 +183,15 @@ public class NewTrailActivity extends AppCompatActivity implements UserLocationO
                 @Override
                 public void onClick(View v) {
                     dialogNewRoute.dismiss();
+                    Intent intent3 = new Intent(NewTrailActivity.this, MainActivity.class);
+                    intent3.putExtra("isInit", true);
                 }
             });
+        } else {
+            MapKitInitializer mapKitInitializer = new MapKitInitializer();
+            mapKitInitializer.initializeMapKit(getApplicationContext(), initialized);
         }
-        MapKitInitializer mapKitInitializer = new MapKitInitializer();
-        mapKitInitializer.initializeMapKit(getApplicationContext(), initialized);
+
         setContentView(R.layout.activity_new_trail);
         requestLocationPermission();
         MapKit mapKit = MapKitFactory.getInstance();
@@ -233,6 +242,7 @@ public class NewTrailActivity extends AppCompatActivity implements UserLocationO
                 intent.putExtra("timeStart", pickerTime.getHour() + "ч. " + pickerTime.getMinute() + "мин.");
                 intent.putExtra("dateStart", DateFormat.format("dd/MM/yyyy", new Date(pickerDate.getSelection())).toString());
                 intent.putExtra("distanceTotal", weight.getDistance().getText());
+                intent.putExtra("distanceTotalMetr", ((weight.getDistance().getText().contains("km")?Float.parseFloat(weight.getDistance().getText().replaceAll("\\D+", ""))*100:weight.getDistance().getText().replaceAll("\\D+", ""))).toString());
                 intent.putExtra("totalTime", weight.getTime().getText());
                 startActivity(intent);
             }

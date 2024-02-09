@@ -12,11 +12,13 @@ public class RouteRealm extends RealmObject {
     private String BPM;
     private String avgVelocity;
     private String diff;
+    private String diffPre;
+    private String distanceTotalMetr;
     @PrimaryKey
     private String mapURI;
 
 
-    public RouteRealm( String timeStart, String kkal, String timeTotal, String dateStart, String BPM, String avgVelocity, String mapURI, String distanceTotal, String diff) {
+    public RouteRealm( String timeStart, String kkal, String timeTotal, String dateStart, String BPM, String avgVelocity, String mapURI, String distanceTotal, String diff, String diffPre, String distanceTotalMetr) {
         this.timeStart = timeStart;
         this.kkal = kkal;
         this.timeTotal = timeTotal;
@@ -26,6 +28,8 @@ public class RouteRealm extends RealmObject {
         this.mapURI = mapURI;
         this.distanceTotal = distanceTotal;
         this.diff = diff;
+        this.diffPre = diffPre;
+        this.distanceTotalMetr = distanceTotalMetr;
     }
     public RouteRealm(){
 
@@ -100,5 +104,21 @@ public class RouteRealm extends RealmObject {
 
     public void setDiff(String diff) {
         this.diff = diff;
+    }
+
+    public String getDiffPre() {
+        return diffPre;
+    }
+
+    public void setDiffPre(String diffPre) {
+        this.diffPre = diffPre;
+    }
+
+    public String getDistanceTotalMetr() {
+        return distanceTotalMetr;
+    }
+
+    public void setDistanceTotalMetr(String distanceTotalMetr) {
+        this.distanceTotalMetr = distanceTotalMetr;
     }
 }
