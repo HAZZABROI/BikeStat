@@ -7,6 +7,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.PointF;
@@ -16,6 +17,7 @@ import android.location.LocationListener;
 import android.os.Bundle;
 
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -64,6 +66,7 @@ import java.util.regex.Pattern;
 
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
+import io.realm.RealmResults;
 import okhttp3.OkHttpClient;
 import okhttp3.ResponseBody;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -93,9 +96,12 @@ public class RouteGoing extends AppCompatActivity implements UserLocationObjectL
     ResponseBody result;
     Realm uiThreadRealm;
     RouteRealm routeRealm;
+    Dialog dialogNewRoute;
+    Button btnDialogYes, btnDialogNo;
     bpmAPI retrofitRes;
     float k;
     long startTime = System.currentTimeMillis();
+    boolean isSchedule;
     bpmModel responseAll;
 
     @Override
@@ -109,13 +115,14 @@ public class RouteGoing extends AppCompatActivity implements UserLocationObjectL
         initialized = intent.getBooleanExtra("isInit",false);
         MapKitInitializer mapKitInitializer = new MapKitInitializer();
         mapKitInitializer.initializeMapKit(getApplicationContext(), initialized);
-        setContentView(R.layout.activity_route_going);
         mapURI = intent.getStringExtra("mapURI");
         timeStart = intent.getStringExtra("timeStart");
         dateStart = intent.getStringExtra("dateStart");
         totalTime = intent.getStringExtra("totalTime");
+        isSchedule = intent.getBooleanExtra("isSchedule",false);
         distanceTotalMetr = intent.getStringExtra("distanceTotalMetr");
         distanceTotal = intent.getStringExtra("distanceTotal");
+        setContentView(R.layout.activity_route_going);
         requestLocationPermission();
         MapKit mapKit = MapKitFactory.getInstance();
         mapKit.resetLocationManagerToDefault();
@@ -130,7 +137,7 @@ public class RouteGoing extends AppCompatActivity implements UserLocationObjectL
         userLocationLayer.setVisible(true);
         userLocationLayer.setObjectListener(this);
         routeRealm = new RouteRealm();
-        RealmConfiguration realmConfiguration = new RealmConfiguration.Builder().allowWritesOnUiThread(true).build();
+        RealmConfiguration realmConfiguration = new RealmConfiguration.Builder().allowWritesOnUiThread(true).allowQueriesOnUiThread(true).build();
         uiThreadRealm = Realm.getInstance(realmConfiguration);
         arrayV = new ArrayList<>();
         Retrofit retrofit = new Retrofit.Builder()
@@ -171,27 +178,84 @@ public class RouteGoing extends AppCompatActivity implements UserLocationObjectL
                 Long time = System.currentTimeMillis() - startTime;
                 DateFormat formatter = new SimpleDateFormat("HH:mm:ss", Locale.US);
                 formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
-                String text = formatter.format(new Date(time));
                 System.out.println(responseAll.getData().getPulse().getAvg());
-                Intent intent2 = new Intent(RouteGoing.this, NewTrailActivity.class);
                 String kkal = df.format(0.014 * 63.4 * (time.floatValue()/60000) * (0.12 * responseAll.getData().getPulse().getAvg()));
                 String diff = getDiff(String.valueOf(time.floatValue()/60000), distanceTotalMetr, responseAll.getData().getPulse().getAvg().toString());
                 String diffPre = getDiff(String.valueOf(toTime(totalTime)), distanceTotalMetr, responseAll.getData().getPulse().getAvg().toString());
-                intent2.putExtra("isNewRoute", true);
-                intent2.putExtra("isInit", true);
-                intent2.putExtra("mapURI", mapURI);
-                intent2.putExtra("timeStart", timeStart);
-                intent2.putExtra("dateStart", dateStart);
-                intent2.putExtra("distanceTotal", distanceTotal);
-                intent2.putExtra("distanceTotalMetr", distanceTotalMetr);
-                intent2.putExtra("timeTotal", text);
-                intent2.putExtra("diff", diff);
-                intent2.putExtra("diffPre", diffPre);
-                intent2.putExtra("kkal", kkal);
-                intent2.putExtra("avgBPM", responseAll.getData().getPulse().getAvg().toString());
-                intent2.putExtra("minBPM", responseAll.getData().getPulse().getMin().toString());
-                intent2.putExtra("maxBPM", responseAll.getData().getPulse().getMax().toString());
-                startActivity(intent2);
+//                intent2.putExtra("isNewRoute", true);
+//                intent2.putExtra("isInit", true);
+//                intent2.putExtra("mapURI", mapURI);
+//                intent2.putExtra("timeStart", timeStart);
+//                intent2.putExtra("dateStart", dateStart);
+//                intent2.putExtra("distanceTotal", distanceTotal);
+//                intent2.putExtra("distanceTotalMetr", distanceTotalMetr);
+//                intent2.putExtra("timeTotal", text);
+//                intent2.putExtra("diff", diff);
+//                intent2.putExtra("diffPre", diffPre);
+//                intent2.putExtra("kkal", kkal);
+//                intent2.putExtra("avgBPM", responseAll.getData().getPulse().getAvg().toString());
+//                intent2.putExtra("minBPM", responseAll.getData().getPulse().getMin().toString());
+//                intent2.putExtra("maxBPM", responseAll.getData().getPulse().getMax().toString());
+//                startActivity(intent2);
+                dialogNewRoute = new Dialog(RouteGoing.this);
+                dialogNewRoute.setContentView(R.layout.layoutcustom_dialog_new_route);
+                dialogNewRoute.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT);
+                dialogNewRoute.setCancelable(false);
+                dialogNewRoute.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+                dialogNewRoute.show();
+                btnDialogYes = dialogNewRoute.findViewById(R.id.btnDialogYes);
+                btnDialogNo = dialogNewRoute.findViewById(R.id.btnDialogNo);
+
+                btnDialogYes.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        routeRealm.setMapURI(mapURI);
+                        routeRealm.setTimeStart(timeStart);
+                        routeRealm.setDateStart(dateStart);
+                        routeRealm.setDiff(diff);
+                        routeRealm.setDiffPre(diffPre);
+                        routeRealm.setDistanceTotalMetr(distanceTotalMetr);
+                        routeRealm.setKkal(kkal);
+                        routeRealm.setTimeTotal(totalTime);
+                        routeRealm.setDistanceTotal(distanceTotal);
+                        routeRealm.setBPM(responseAll.getData().getPulse().getAvg().toString() + "/" + responseAll.getData().getPulse().getMin().toString() + "/" + responseAll.getData().getPulse().getMax().toString());
+
+                        uiThreadRealm.executeTransactionAsync(new Realm.Transaction() {
+                            @Override
+                            public void execute(Realm realm) {
+                                if(isSchedule) {
+                                    final RealmResults<RouteRealm> routes = realm
+                                            .where(RouteRealm.class)
+                                            .findAll();
+                                    RouteRealm routeRealmDelete = routes.where().equalTo("mapURI", mapURI).findFirst();
+                                    routeRealmDelete.deleteFromRealm();
+                                }
+                                try {
+                                    realm.copyToRealm(routeRealm);
+                                    routeRealm = new RouteRealm();
+                                    Intent intent2 = new Intent(RouteGoing.this, MainActivity.class);
+                                    intent2.putExtra("isInit", true);
+                                    startActivity(intent2);
+                                }catch (io.realm.exceptions.RealmPrimaryKeyConstraintException e){
+                                    RouteGoing.this.runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            Toast.makeText(RouteGoing.this, "У вас уже существует такой маршрут!",Toast.LENGTH_LONG);
+                                        }
+                                    });}
+                            }
+                        });
+
+                    }
+                });
+                btnDialogNo.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialogNewRoute.dismiss();
+                        Intent intent3 = new Intent(RouteGoing.this, MainActivity.class);
+                        intent3.putExtra("isInit", true);
+                    }
+                });
             }
 
             @Override

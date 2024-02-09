@@ -66,6 +66,9 @@ public class BI_RecyclerViewAdapterFirst extends RecyclerView.Adapter<RecyclerVi
                 intent.putExtra("diff",infoTrailModels.get(pos).getDiff());
                 intent.putExtra("diffPre",infoTrailModels.get(pos).getDiffPre());
                 intent.putExtra("isInit",initialized);
+                intent.putExtra("isSchedule", infoTrailModels.get(pos).getSchedule());
+                if (infoTrailModels.get(pos).getSchedule() != null)
+                    infoTrailModels.get(pos).setSchedule(false);
                 initialized = true;
                 context.startActivity(intent);
             }

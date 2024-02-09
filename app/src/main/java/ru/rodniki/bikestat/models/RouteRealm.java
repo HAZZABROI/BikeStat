@@ -14,11 +14,12 @@ public class RouteRealm extends RealmObject {
     private String diff;
     private String diffPre;
     private String distanceTotalMetr;
+    private Boolean isSchedule;
     @PrimaryKey
     private String mapURI;
 
 
-    public RouteRealm( String timeStart, String kkal, String timeTotal, String dateStart, String BPM, String avgVelocity, String mapURI, String distanceTotal, String diff, String diffPre, String distanceTotalMetr) {
+    public RouteRealm( String timeStart, String kkal, String timeTotal, String dateStart, String BPM, String avgVelocity, String mapURI, String distanceTotal, String diff, String diffPre, String distanceTotalMetr, Boolean isSchedule) {
         this.timeStart = timeStart;
         this.kkal = kkal;
         this.timeTotal = timeTotal;
@@ -30,6 +31,7 @@ public class RouteRealm extends RealmObject {
         this.diff = diff;
         this.diffPre = diffPre;
         this.distanceTotalMetr = distanceTotalMetr;
+        this.isSchedule= isSchedule;
     }
     public RouteRealm(){
 
@@ -120,5 +122,13 @@ public class RouteRealm extends RealmObject {
 
     public void setDistanceTotalMetr(String distanceTotalMetr) {
         this.distanceTotalMetr = distanceTotalMetr;
+    }
+
+    public Boolean getSchedule() {
+        return isSchedule;
+    }
+
+    public void setSchedule(Boolean schedule) {
+        isSchedule = schedule;
     }
 }

@@ -9,7 +9,10 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Message;
 import android.view.View;
+import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,23 +38,49 @@ import com.yandex.runtime.Error;
 import com.yandex.runtime.network.NetworkError;
 import com.yandex.runtime.network.RemoteError;
 
+import java.text.DateFormat;
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+import java.util.TimeZone;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import io.realm.Realm;
+import io.realm.RealmResults;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import ru.rodniki.bikestat.interfaces.bpmAPI;
+import ru.rodniki.bikestat.models.RouteRealm;
+import ru.rodniki.bikestat.models.bpmModel;
 import ru.rodniki.bikestat.utils.MapKitInitializer;
 import ru.rodniki.bikestat.R;
 
 public class DetailTrailActivity extends AppCompatActivity implements UserLocationObjectListener, CameraListener, com.yandex.mapkit.transport.bicycle.Session.RouteListener {
 
-    String totalTime, totalDistance, avgBPM, kkal, avgVelocity, startDate, mapURI, diff, diffPre;
+    String totalTime, totalDistance, avgBPM, kkal, avgVelocity, startDate, mapURI, diff, diffPre, diffStr;
     TextView startDateT, kkalT, avgBPMT, totalDistanceT,
             totalTimeT, textMapT, textGraphT, textDiff;
     CardView cardMap;
     ConstraintLayout layoutBack;
     MapView mapView;
     BicycleRouter bicycleRouter;
+    ImageView imageDelete;
     MapObjectCollection mapObjectCollection;
+    String getUrl = "https://dt.miet.ru";
+    String token = "az4fvf7nzi1XPIsYiMEu";
+    Button buttonStart;
+    Realm uiThreadRealm;
+    boolean isSchedule;
     com.yandex.mapkit.transport.bicycle.Session drivingSession;
-
+    float k;
+    long startTime = System.currentTimeMillis();
+    bpmAPI retrofitRes;
+    bpmModel responseAll;
     Boolean initialized;
 
     @Override
@@ -63,23 +92,63 @@ public class DetailTrailActivity extends AppCompatActivity implements UserLocati
         MapKitInitializer mapKitInitializer = new MapKitInitializer();
         mapKitInitializer.initializeMapKit(getApplicationContext(), initialized);
         setContentView(R.layout.activity_detail_trail);
-        mapView = findViewById(R.id.mapView);
         startDateT = findViewById(R.id.dateStart);
         kkalT = findViewById(R.id.totalKkal);
         avgBPMT = findViewById(R.id.textBPM);
         totalDistanceT = findViewById(R.id.totalDistance);
         totalTimeT = findViewById(R.id.totalTime);
+        buttonStart = findViewById(R.id.buttonStart);
         textMapT = findViewById(R.id.textMap);
         textGraphT = findViewById(R.id.imageGraph);
         cardMap = findViewById(R.id.cardMap);
         layoutBack = findViewById(R.id.layoutBack);
+        imageDelete = findViewById(R.id.imageDelete);
         textDiff = findViewById(R.id.textDiff);
+        mapView = findViewById(R.id.mapView);
         mapView.getMap().addCameraListener(this);
         mapView.getMap().setRotateGesturesEnabled(false);
         mapView.getMap().setTiltGesturesEnabled(false);
         bicycleRouter = TransportFactory.getInstance().createBicycleRouter();
+        getIntentExtras(intent);
         mapObjectCollection = mapView.getMap().getMapObjects();
-
+        if (isSchedule){
+            buttonStart.setVisibility(View.VISIBLE);
+        }
+        Realm.init(this);
+        uiThreadRealm = Realm.getDefaultInstance();
+        buttonStart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(DetailTrailActivity.this, RouteGoing.class);
+                intent.putExtra("isInit", true);
+                intent.putExtra("mapURI", mapURI);
+                intent.putExtra("timeStart", startTime);
+                intent.putExtra("dateStart", startDate);
+                intent.putExtra("distanceTotal", totalDistance);
+                intent.putExtra("distanceTotalMetr", ((totalDistance.contains("km")?Float.parseFloat(totalDistance.replaceAll("\\D+", ""))*100:totalDistance.replaceAll("\\D+", ""))).toString());
+                intent.putExtra("totalTime", totalTime);
+                intent.putExtra("isSchedule", true);
+                startActivity(intent);
+            }
+        });
+        imageDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                uiThreadRealm.executeTransactionAsync(new Realm.Transaction() {
+                    @Override
+                    public void execute(Realm realm) {
+                        final RealmResults<RouteRealm> routes = realm
+                                .where(RouteRealm.class)
+                                .findAll();
+                        RouteRealm routeRealm = routes.where().equalTo("mapURI",mapURI).findFirst();
+                        routeRealm.deleteFromRealm();
+                        Intent intent = new Intent(DetailTrailActivity.this, MainActivity.class);
+                        intent.putExtra("isInit", true);
+                        startActivity(intent);
+                    }
+                });
+            }
+        });
         layoutBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -89,11 +158,12 @@ public class DetailTrailActivity extends AppCompatActivity implements UserLocati
             }
         });
 
-        getIntentExtras(intent);
+
         setTextInfo();
         toggleCards();
         submitRequest();
     }
+
 
     private void toggleCards(){
         textMapT.setOnClickListener(new View.OnClickListener() {
@@ -109,14 +179,54 @@ public class DetailTrailActivity extends AppCompatActivity implements UserLocati
             }
         });
     }
+    public int toTime(String time){
+        Pattern pattern = Pattern.compile("(\\d+)\\s*(days?|hr|min)");
+        Matcher matcher = pattern.matcher(time);
 
+        int days = 0;
+        int hours = 0;
+        int minutes = 0;
+
+        while (matcher.find()) {
+            int value = Integer.parseInt(matcher.group(1));
+            String unit = matcher.group(2);
+
+            switch (unit) {
+                case "days":
+                    days = value;
+                    break;
+                case "hr":
+                    hours = value;
+                    break;
+                case "min":
+                    minutes = value;
+                    break;
+            }
+        }
+
+        int totalMinutes = days * 24 + hours + minutes / 60;;
+
+        return totalMinutes;
+    }
+    public String getDiff(String time, String distance, String avgBPM){
+        k = (Float.parseFloat(avgBPM)*Float.parseFloat(time))/(Float.parseFloat(distance));
+        System.out.println(k);
+        if(k < 0.003){
+            diffStr = "легкий";
+        } else if (k < 0.02) {
+            diffStr = "средний";
+        } else {
+            diffStr = "сложный";
+        }
+        return diffStr;
+    }
     private void setTextInfo(){
         startDateT.setText(startDate);
         kkalT.setText(kkal);
         avgBPMT.setText(avgBPM);
         totalDistanceT.setText(totalDistance);
         totalTimeT.setText(totalTime);
-        textDiff.setText(diffPre + "/" + diff);
+        textDiff.setText(diffPre + ((diff == null)?"":"/"+diff));
     }
     private void getIntentExtras(Intent intent){
         totalTime = intent.getStringExtra("totalTime");
@@ -128,6 +238,7 @@ public class DetailTrailActivity extends AppCompatActivity implements UserLocati
         diff = intent.getStringExtra("diff");
         diffPre = intent.getStringExtra("diffPre");
         mapURI = intent.getStringExtra("mapURI");
+        isSchedule = intent.getBooleanExtra("isSchedule",false);
     }
 
     @Override

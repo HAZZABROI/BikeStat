@@ -76,8 +76,11 @@ import com.yandex.runtime.network.NetworkError;
 import com.yandex.runtime.network.RemoteError;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import io.realm.Realm;
 
@@ -114,8 +117,9 @@ public class NewTrailActivity extends AppCompatActivity implements UserLocationO
     Weight weight;
     UriObjectMetadata uriRoute;
     Boolean initialized;
-    String mapURI, timeStart, dateStart, distanceTotal, avgBPM, minBPM, maxBPM, timeTotalStr, kkal, diff, diffPre, distanceTotalMetr;
+    String mapURI, timeStart, dateStart, distanceTotal, avgBPM, minBPM, maxBPM, timeTotalStr, kkal, diff, diffPre, distanceTotalMetr, diffStr;
     com.yandex.mapkit.transport.bicycle.Session drivingSession;
+    float k;
 
 
     private void sumbitQuery(String query){
@@ -131,68 +135,69 @@ public class NewTrailActivity extends AppCompatActivity implements UserLocationO
         Realm.init(this);
         uiThreadRealm = Realm.getDefaultInstance();
         initialized = intent.getBooleanExtra("isInit", false);
-        if (intent.getBooleanExtra("isNewRoute", false)){
-            mapURI = intent.getStringExtra("mapURI");
-            timeStart = intent.getStringExtra("timeStart");
-            dateStart = intent.getStringExtra("dateStart");
-            distanceTotal = intent.getStringExtra("distanceTotal");
-            avgBPM = intent.getStringExtra("avgBPM");
-            kkal = intent.getStringExtra("kkal");
-            minBPM = intent.getStringExtra("minBPM");
-            distanceTotalMetr = intent.getStringExtra("distanceTotalMetr");
-            maxBPM = intent.getStringExtra("maxBPM");
-            diff = intent.getStringExtra("diff");
-            diffPre = intent.getStringExtra("diffPre");
-            timeTotalStr = intent.getStringExtra("timeTotal");
-            dialogNewRoute = new Dialog(NewTrailActivity.this);
-            dialogNewRoute.setContentView(R.layout.layoutcustom_dialog_new_route);
-            dialogNewRoute.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT);
-            dialogNewRoute.setCancelable(false);
-            dialogNewRoute.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
-            dialogNewRoute.show();
-            btnDialogYes = dialogNewRoute.findViewById(R.id.btnDialogYes);
-            btnDialogNo = dialogNewRoute.findViewById(R.id.btnDialogNo);
-
-            btnDialogYes.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    routeRealm.setMapURI(mapURI);
-                    routeRealm.setTimeStart(timeStart);
-                    routeRealm.setDateStart(dateStart);
-                    routeRealm.setBPM(avgBPM);
-                    routeRealm.setDiff(diff);
-                    routeRealm.setDiffPre(diffPre);
-                    routeRealm.setDistanceTotalMetr(distanceTotalMetr);
-                    routeRealm.setKkal(kkal);
-                    routeRealm.setTimeTotal(timeTotalStr);
-                    routeRealm.setDistanceTotal(distanceTotal);
-                    routeRealm.setBPM(avgBPM + "/" + minBPM + "/" + maxBPM);
-                    uiThreadRealm.close();
-                    uiThreadRealm.executeTransactionAsync(new Realm.Transaction() {
-                        @Override
-                        public void execute(Realm realm) {
-                            realm.copyToRealm(routeRealm);
-                            routeRealm = new RouteRealm();
-                        }
-                    });
-                    Intent intent2 = new Intent(NewTrailActivity.this, MainActivity.class);
-                    intent2.putExtra("isInit", true);
-                    startActivity(intent2);
-                }
-            });
-            btnDialogNo.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    dialogNewRoute.dismiss();
-                    Intent intent3 = new Intent(NewTrailActivity.this, MainActivity.class);
-                    intent3.putExtra("isInit", true);
-                }
-            });
-        } else {
-            MapKitInitializer mapKitInitializer = new MapKitInitializer();
-            mapKitInitializer.initializeMapKit(getApplicationContext(), initialized);
-        }
-
+//        if (intent.getBooleanExtra("isNewRoute", false)){
+//            mapURI = intent.getStringExtra("mapURI");
+//            timeStart = intent.getStringExtra("timeStart");
+//            dateStart = intent.getStringExtra("dateStart");
+//            distanceTotal = intent.getStringExtra("distanceTotal");
+//            avgBPM = intent.getStringExtra("avgBPM");
+//            kkal = intent.getStringExtra("kkal");
+//            minBPM = intent.getStringExtra("minBPM");
+//            distanceTotalMetr = intent.getStringExtra("distanceTotalMetr");
+//            maxBPM = intent.getStringExtra("maxBPM");
+//            diff = intent.getStringExtra("diff");
+//            diffPre = intent.getStringExtra("diffPre");
+//            timeTotalStr = intent.getStringExtra("timeTotal");
+//            dialogNewRoute = new Dialog(NewTrailActivity.this);
+//            dialogNewRoute.setContentView(R.layout.layoutcustom_dialog_new_route);
+//            dialogNewRoute.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT);
+//            dialogNewRoute.setCancelable(false);
+//            dialogNewRoute.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+//            dialogNewRoute.show();
+//            btnDialogYes = dialogNewRoute.findViewById(R.id.btnDialogYes);
+//            btnDialogNo = dialogNewRoute.findViewById(R.id.btnDialogNo);
+//
+//            btnDialogYes.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    routeRealm.setMapURI(mapURI);
+//                    routeRealm.setTimeStart(timeStart);
+//                    routeRealm.setDateStart(dateStart);
+//                    routeRealm.setBPM(avgBPM);
+//                    routeRealm.setDiff(diff);
+//                    routeRealm.setDiffPre(diffPre);
+//                    routeRealm.setDistanceTotalMetr(distanceTotalMetr);
+//                    routeRealm.setKkal(kkal);
+//                    routeRealm.setTimeTotal(timeTotalStr);
+//                    routeRealm.setDistanceTotal(distanceTotal);
+//                    routeRealm.setBPM(avgBPM + "/" + minBPM + "/" + maxBPM);
+//                    uiThreadRealm.close();
+//                    uiThreadRealm.executeTransactionAsync(new Realm.Transaction() {
+//                        @Override
+//                        public void execute(Realm realm) {
+//                            realm.copyToRealm(routeRealm);
+//                            routeRealm = new RouteRealm();
+//                            Intent intent2 = new Intent(NewTrailActivity.this, MainActivity.class);
+//                            intent2.putExtra("isInit", true);
+//                            startActivity(intent2);
+//                        }
+//                    });
+//
+//                }
+//            });
+//            btnDialogNo.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    dialogNewRoute.dismiss();
+//                    Intent intent3 = new Intent(NewTrailActivity.this, MainActivity.class);
+//                    intent3.putExtra("isInit", true);
+//                }
+//            });
+//        } else {
+//
+//        }
+        MapKitInitializer mapKitInitializer = new MapKitInitializer();
+        mapKitInitializer.initializeMapKit(getApplicationContext(), initialized);
         setContentView(R.layout.activity_new_trail);
         requestLocationPermission();
         MapKit mapKit = MapKitFactory.getInstance();
@@ -240,8 +245,8 @@ public class NewTrailActivity extends AppCompatActivity implements UserLocationO
                 Intent intent = new Intent(NewTrailActivity.this, RouteGoing.class);
                 intent.putExtra("isInit", true);
                 intent.putExtra("mapURI", uriRoute.getUris().get(0).getValue());
-                intent.putExtra("timeStart", pickerTime.getHour() + "ч. " + pickerTime.getMinute() + "мин.");
-                intent.putExtra("dateStart", DateFormat.format("dd/MM/yyyy", new Date(pickerDate.getSelection())).toString());
+                intent.putExtra("timeStart", new Date().getHours() + "ч. " + new Date().getMinutes() + "мин.");
+                intent.putExtra("dateStart", DateFormat.format("dd/MM/yyyy", new Date()).toString());
                 intent.putExtra("distanceTotal", weight.getDistance().getText());
                 intent.putExtra("distanceTotalMetr", ((weight.getDistance().getText().contains("km")?Float.parseFloat(weight.getDistance().getText().replaceAll("\\D+", ""))*100:weight.getDistance().getText().replaceAll("\\D+", ""))).toString());
                 intent.putExtra("totalTime", weight.getTime().getText());
@@ -276,16 +281,30 @@ public class NewTrailActivity extends AppCompatActivity implements UserLocationO
                     routeRealm.setTimeTotal(weight.getTime().getText());
                     routeRealm.setDistanceTotal(weight.getDistance().getText());
                     routeRealm.setMapURI(uriRoute.getUris().get(0).getValue());
+                    routeRealm.setSchedule(true);
+                    String diffPre = getDiff(String.valueOf(toTime(weight.getTime().getText())), ((weight.getDistance().getText().contains("km")?Float.parseFloat(weight.getDistance().getText().replaceAll("\\D+", ""))*100:weight.getDistance().getText().replaceAll("\\D+", ""))).toString(), "69");
+                    routeRealm.setDiffPre(diffPre);
                     uiThreadRealm.executeTransactionAsync(new Realm.Transaction() {
                         @Override
                         public void execute(Realm realm) {
-                            realm.copyToRealm(routeRealm);
-                            routeRealm = new RouteRealm();
+                            try {
+                                realm.copyToRealm(routeRealm);
+                                routeRealm = new RouteRealm();
+                                Intent intent = new Intent(NewTrailActivity.this, MainActivity.class);
+                                intent.putExtra("isInit", true);
+                                intent.putExtra("isSchedule", true);
+                                startActivity(intent);
+                            }catch (io.realm.exceptions.RealmPrimaryKeyConstraintException e){
+                                NewTrailActivity.this.runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Toast.makeText(NewTrailActivity.this, "У вас уже существует такой маршрут!",Toast.LENGTH_LONG);
+                                    }
+                                });
+                            }
                         }
                     });
-                    Intent intent = new Intent(NewTrailActivity.this, MainActivity.class);
-                    intent.putExtra("isInit", true);
-                    startActivity(intent);
+
                 }else {
                     Toast.makeText(getApplicationContext(), "Вы должны ввести дату и время", Toast.LENGTH_LONG);
                 }
@@ -328,6 +347,47 @@ public class NewTrailActivity extends AppCompatActivity implements UserLocationO
                 openDatePicker();
             }
         });
+    }
+    public int toTime(String time){
+        Pattern pattern = Pattern.compile("(\\d+)\\s*(days?|hr|min)");
+        Matcher matcher = pattern.matcher(time);
+
+        int days = 0;
+        int hours = 0;
+        int minutes = 0;
+
+        while (matcher.find()) {
+            int value = Integer.parseInt(matcher.group(1));
+            String unit = matcher.group(2);
+
+            switch (unit) {
+                case "days":
+                    days = value;
+                    break;
+                case "hr":
+                    hours = value;
+                    break;
+                case "min":
+                    minutes = value;
+                    break;
+            }
+        }
+
+        int totalMinutes = days * 24 + hours + minutes / 60;;
+
+        return totalMinutes;
+    }
+    public String getDiff(String time, String distance, String avgBPM){
+        k = (Float.parseFloat(avgBPM)*Float.parseFloat(time))/(Float.parseFloat(distance));
+        System.out.println(k);
+        if(k < 0.003){
+            diffStr = "легкий";
+        } else if (k < 0.02) {
+            diffStr = "средний";
+        } else {
+            diffStr = "сложный";
+        }
+        return diffStr;
     }
 
     private void sumbitRequest() {
