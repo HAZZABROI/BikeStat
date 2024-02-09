@@ -86,7 +86,7 @@ public class RouteGoing extends AppCompatActivity implements UserLocationObjectL
     MapView mapView;
     Boolean initialized;
     BicycleRouter bicycleRouter;
-    String mapURI, timeStart, dateStart, distanceTotal;
+    String mapURI, timeStart, dateStart, distanceTotal, diffStr, totalTime;
     MapObjectCollection mapObjectCollection;
     com.yandex.mapkit.transport.bicycle.Session drivingSession;
     String getUrl = "https://dt.miet.ru";
@@ -97,6 +97,7 @@ public class RouteGoing extends AppCompatActivity implements UserLocationObjectL
     Realm uiThreadRealm;
     RouteRealm routeRealm;
     bpmAPI retrofitRes;
+    float k;
     long startTime = System.currentTimeMillis();
     bpmModel responseAll;
 
@@ -116,6 +117,7 @@ public class RouteGoing extends AppCompatActivity implements UserLocationObjectL
         mapURI = intent.getStringExtra("mapURI");
         timeStart = intent.getStringExtra("timeStart");
         dateStart = intent.getStringExtra("dateStart");
+        totalTime = intent.getStringExtra("totalTime");
         distanceTotal = intent.getStringExtra("distanceTotal");
         requestLocationPermission();
         MapKit mapKit = MapKitFactory.getInstance();
@@ -173,20 +175,24 @@ public class RouteGoing extends AppCompatActivity implements UserLocationObjectL
                 formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
                 String text = formatter.format(new Date(time));
                 System.out.println(responseAll.getData().getPulse().getAvg());
-                Intent intent = new Intent(RouteGoing.this, NewTrailActivity.class);
+                Intent intent2 = new Intent(RouteGoing.this, NewTrailActivity.class);
                 String kkal = String.valueOf(0.014 * 63.4 * (time/60000) * (0.12 * responseAll.getData().getPulse().getAvg()));
-                intent.putExtra("isNewRoute", true);
-                intent.putExtra("isInit", true);
-                intent.putExtra("mapURI", mapURI);
-                intent.putExtra("timeStart", timeStart);
-                intent.putExtra("dateStart", dateStart);
-                intent.putExtra("distanceTotal", distanceTotal);
-                intent.putExtra("timeTotal", text);
-                intent.putExtra("kkal", kkal);
-                intent.putExtra("avgBPM", responseAll.getData().getPulse().getAvg().toString());
-                intent.putExtra("minBPM", responseAll.getData().getPulse().getMin().toString());
-                intent.putExtra("maxBPM", responseAll.getData().getPulse().getMax().toString());
-                startActivity(intent);
+                String distanceMetr = distanceTotal.replaceAll("\\D+", "");
+                String diff = getDiff(String.valueOf(time/6000), distanceMetr, responseAll.getData().getPulse().getAvg().toString());
+                String diffPre = getDiff(totalTime.replaceAll("\\D+", ""), distanceMetr, responseAll.getData().getPulse().getAvg().toString());
+                intent2.putExtra("isNewRoute", true);
+                intent2.putExtra("isInit", true);
+                intent2.putExtra("mapURI", mapURI);
+                intent2.putExtra("timeStart", timeStart);
+                intent2.putExtra("dateStart", dateStart);
+                intent2.putExtra("distanceTotal", distanceTotal);
+                intent2.putExtra("timeTotal", text);
+                intent2.putExtra("diff", diffPre+"/"+diff);
+                intent2.putExtra("kkal", kkal);
+                intent2.putExtra("avgBPM", responseAll.getData().getPulse().getAvg().toString());
+                intent2.putExtra("minBPM", responseAll.getData().getPulse().getMin().toString());
+                intent2.putExtra("maxBPM", responseAll.getData().getPulse().getMax().toString());
+                startActivity(intent2);
             }
 
             @Override
@@ -195,6 +201,19 @@ public class RouteGoing extends AppCompatActivity implements UserLocationObjectL
             }
         });
     }
+
+    public String getDiff(String time, String distance, String avgBPM){
+        k = (Float.parseFloat(avgBPM)*Float.parseFloat(time))/Float.parseFloat(distance);
+        if(k < Float.parseFloat(avgBPM)){
+            diffStr = "легкий";
+        } else if (k > Float.parseFloat(avgBPM)) {
+            diffStr = "сложный";
+        } else if (k >= Float.parseFloat(avgBPM) + 15 && k <= (Float.parseFloat(avgBPM) - 15)) {
+            diffStr = "средний";
+        }
+        return diffStr;
+    }
+
     @Override
     protected void onStop() {
         mapView.onStop();

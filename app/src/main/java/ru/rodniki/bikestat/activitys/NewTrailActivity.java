@@ -113,7 +113,7 @@ public class NewTrailActivity extends AppCompatActivity implements UserLocationO
     Weight weight;
     UriObjectMetadata uriRoute;
     Boolean initialized;
-    String mapURI, timeStart, dateStart, distanceTotal, avgBPM, minBPM, maxBPM, timeTotalStr, kkal;
+    String mapURI, timeStart, dateStart, distanceTotal, avgBPM, minBPM, maxBPM, timeTotalStr, kkal, diff;
     com.yandex.mapkit.transport.bicycle.Session drivingSession;
 
 
@@ -139,6 +139,7 @@ public class NewTrailActivity extends AppCompatActivity implements UserLocationO
             kkal = intent.getStringExtra("kkal");
             minBPM = intent.getStringExtra("minBPM");
             maxBPM = intent.getStringExtra("maxBPM");
+            diff = intent.getStringExtra("diff");
             timeTotalStr = intent.getStringExtra("timeTotal");
             dialogNewRoute = new Dialog(NewTrailActivity.this);
             dialogNewRoute.setContentView(R.layout.layoutcustom_dialog_new_route);
@@ -156,6 +157,7 @@ public class NewTrailActivity extends AppCompatActivity implements UserLocationO
                     routeRealm.setTimeStart(timeStart);
                     routeRealm.setDateStart(dateStart);
                     routeRealm.setBPM(avgBPM);
+                    routeRealm.setDiff(diff);
                     routeRealm.setKkal(kkal);
                     routeRealm.setTimeTotal(timeTotalStr);
                     routeRealm.setDistanceTotal(distanceTotal);
@@ -231,6 +233,7 @@ public class NewTrailActivity extends AppCompatActivity implements UserLocationO
                 intent.putExtra("timeStart", pickerTime.getHour() + "ч. " + pickerTime.getMinute() + "мин.");
                 intent.putExtra("dateStart", DateFormat.format("dd/MM/yyyy", new Date(pickerDate.getSelection())).toString());
                 intent.putExtra("distanceTotal", weight.getDistance().getText());
+                intent.putExtra("totalTime", weight.getTime().getText());
                 startActivity(intent);
             }
         });

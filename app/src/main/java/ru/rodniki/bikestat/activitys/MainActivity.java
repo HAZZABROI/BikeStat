@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity implements TimePickerDialog.
         List<RouteRealm> routeRealmList = uiThreadRealm.where(RouteRealm.class).findAll();
         for (RouteRealm i : routeRealmList){
             RouteRealm.add(new RouteRealm(i.getTimeStart(), i.getKkal(), i.getTimeTotal(),
-                    i.getDateStart(), i.getBPM(), i.getAvgVelocity(), i.getMapURI(), i.getDistanceTotal()));
+                    i.getDateStart(), i.getBPM(), i.getAvgVelocity(), i.getMapURI(), i.getDistanceTotal(), i.getDiff()));
         }
     }
 
