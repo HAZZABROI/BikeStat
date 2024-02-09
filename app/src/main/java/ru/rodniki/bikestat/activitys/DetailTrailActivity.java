@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatDelegate;
 import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -16,9 +17,7 @@ import com.yandex.mapkit.Animation;
 import com.yandex.mapkit.MapKitFactory;
 import com.yandex.mapkit.ScreenPoint;
 import com.yandex.mapkit.ScreenRect;
-import com.yandex.mapkit.directions.driving.DrivingSession;
 import com.yandex.mapkit.geometry.Geometry;
-import com.yandex.mapkit.geometry.Point;
 import com.yandex.mapkit.layers.ObjectEvent;
 import com.yandex.mapkit.map.CameraListener;
 import com.yandex.mapkit.map.CameraPosition;
@@ -27,22 +26,18 @@ import com.yandex.mapkit.map.Map;
 import com.yandex.mapkit.map.MapObjectCollection;
 import com.yandex.mapkit.map.PolylineMapObject;
 import com.yandex.mapkit.mapview.MapView;
-import com.yandex.mapkit.search.Response;
-import com.yandex.mapkit.search.Session;
 import com.yandex.mapkit.transport.TransportFactory;
 import com.yandex.mapkit.transport.bicycle.BicycleRouter;
 import com.yandex.mapkit.transport.bicycle.Route;
 import com.yandex.mapkit.user_location.UserLocationObjectListener;
 import com.yandex.mapkit.user_location.UserLocationView;
 import com.yandex.runtime.Error;
-import com.yandex.runtime.image.ImageProvider;
 import com.yandex.runtime.network.NetworkError;
 import com.yandex.runtime.network.RemoteError;
 
 import java.util.List;
 
-import ru.rodniki.bikestat.BuildConfig;
-import ru.rodniki.bikestat.MapKitInitializer;
+import ru.rodniki.bikestat.utils.MapKitInitializer;
 import ru.rodniki.bikestat.R;
 
 public class DetailTrailActivity extends AppCompatActivity implements UserLocationObjectListener, CameraListener, com.yandex.mapkit.transport.bicycle.Session.RouteListener {
@@ -75,7 +70,7 @@ public class DetailTrailActivity extends AppCompatActivity implements UserLocati
         totalDistanceT = findViewById(R.id.totalDistance);
         totalTimeT = findViewById(R.id.totalTime);
         textMapT = findViewById(R.id.textMap);
-        textGraphT = findViewById(R.id.textGraph);
+        textGraphT = findViewById(R.id.imageGraph);
         cardMap = findViewById(R.id.cardMap);
         layoutBack = findViewById(R.id.layoutBack);
         textDiff = findViewById(R.id.textDiff);
@@ -152,7 +147,10 @@ public class DetailTrailActivity extends AppCompatActivity implements UserLocati
         MapKitFactory.getInstance().onStop();
         super.onStop();
     }
-
+    @SuppressLint("MissingSuperCall")
+    @Override
+    public void onBackPressed() {
+    }
     @Override
     public void onCameraPositionChanged(@NonNull Map map, @NonNull CameraPosition cameraPosition, @NonNull CameraUpdateReason cameraUpdateReason, boolean b) {
 

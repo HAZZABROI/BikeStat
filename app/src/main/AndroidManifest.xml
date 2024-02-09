@@ -29,20 +29,15 @@
             android:exported="false" />
         <activity
             android:name=".activitys.MainActivity"
-            android:exported="false"
+            android:exported="true"
             android:label="@string/title_activity_main"
-            android:theme="@style/Theme.BikeStat" />
-        <activity
-            android:name=".activitys.LoginActivity"
-            android:exported="true">
+            android:theme="@style/Theme.BikeStat">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <receiver android:name=".RouteNotifReceiver" />
     </application>
 
 </manifest>

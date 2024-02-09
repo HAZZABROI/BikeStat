@@ -230,7 +230,7 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textGraph">
+                    app:layout_constraintTop_toBottomOf="@+id/imageGraph">
 
                     <com.yandex.mapkit.mapview.MapView
                         android:id="@+id/mapView"
@@ -248,7 +248,7 @@
                 </androidx.cardview.widget.CardView>
 
                 <TextView
-                    android:id="@+id/textGraph"
+                    android:id="@+id/imageGraph"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="26dp"

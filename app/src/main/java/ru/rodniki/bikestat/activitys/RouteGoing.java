@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.PointF;
@@ -54,17 +55,10 @@ import com.yandex.runtime.image.ImageProvider;
 import com.yandex.runtime.network.NetworkError;
 import com.yandex.runtime.network.RemoteError;
 
-import org.jetbrains.annotations.Async;
-
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
 import java.util.TimeZone;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -78,9 +72,9 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
-import ru.rodniki.bikestat.MapKitInitializer;
+import ru.rodniki.bikestat.utils.MapKitInitializer;
 import ru.rodniki.bikestat.R;
-import ru.rodniki.bikestat.bpmAPI;
+import ru.rodniki.bikestat.interfaces.bpmAPI;
 import ru.rodniki.bikestat.models.RouteRealm;
 import ru.rodniki.bikestat.models.bpmModel;
 
@@ -111,7 +105,6 @@ public class RouteGoing extends AppCompatActivity implements UserLocationObjectL
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
         logging.setLevel(HttpLoggingInterceptor.Level.HEADERS);
         OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
-
         httpClient.addInterceptor(logging);
         initialized = intent.getBooleanExtra("isInit",false);
         MapKitInitializer mapKitInitializer = new MapKitInitializer();
@@ -261,7 +254,10 @@ public class RouteGoing extends AppCompatActivity implements UserLocationObjectL
         super.onDestroy();
         uiThreadRealm.close();
     }
-
+    @SuppressLint("MissingSuperCall")
+    @Override
+    public void onBackPressed() {
+    }
     @Override
     protected void onStart() {
         mapView.onStart();

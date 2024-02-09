@@ -2,13 +2,19 @@ package ru.rodniki.bikestat.activitys;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.compose.ui.platform.ComposeView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.TimePicker;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -24,9 +30,9 @@ import ru.rodniki.bikestat.adapters.BI_RecyclerViewAdapterFirst;
 public class MainActivity extends AppCompatActivity implements TimePickerDialog.OnTimeSetListener{
 
     ArrayList<RouteRealm> RouteRealm = new ArrayList<>();
+    TextView allDistance;
     Realm uiThreadRealm;
     boolean initialized;
-    long time;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,9 +46,8 @@ public class MainActivity extends AppCompatActivity implements TimePickerDialog.
         uiThreadRealm = Realm.getDefaultInstance();
 
         RecyclerView recyclerViewFirst = findViewById(R.id.mRecyclerViewFirst);
-
+        allDistance = findViewById(R.id.allDistance);
         FloatingActionButton fab = findViewById(R.id.floatingActionButton);
-        System.out.println(time);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -66,12 +71,18 @@ public class MainActivity extends AppCompatActivity implements TimePickerDialog.
         uiThreadRealm.close();
     }
 
+    @SuppressLint("MissingSuperCall")
+    @Override
+    public void onBackPressed() {
+    }
+
     private  void setUpInfoTrailModels(){
         List<RouteRealm> routeRealmList = uiThreadRealm.where(RouteRealm.class).findAll();
         for (RouteRealm i : routeRealmList){
             RouteRealm.add(new RouteRealm(i.getTimeStart(), i.getKkal(), i.getTimeTotal(),
                     i.getDateStart(), i.getBPM(), i.getAvgVelocity(), i.getMapURI(), i.getDistanceTotal(), i.getDiff(), i.getDiffPre(), i.getDistanceTotalMetr()));
         }
+        allDistance.setText("Количество " + routeRealmList.size());
     }
 
     @Override

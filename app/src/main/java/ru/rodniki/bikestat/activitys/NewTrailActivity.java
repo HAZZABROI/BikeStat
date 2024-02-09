@@ -12,6 +12,7 @@ import androidx.fragment.app.FragmentManager;
 
 import android.animation.LayoutTransition;
 
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 
 import android.content.Intent;
@@ -80,7 +81,7 @@ import java.util.List;
 
 import io.realm.Realm;
 
-import ru.rodniki.bikestat.MapKitInitializer;
+import ru.rodniki.bikestat.utils.MapKitInitializer;
 import ru.rodniki.bikestat.R;
 import ru.rodniki.bikestat.models.RouteRealm;
 
@@ -350,6 +351,10 @@ public class NewTrailActivity extends AppCompatActivity implements UserLocationO
         super.onStop();
     }
 
+    @SuppressLint("MissingSuperCall")
+    @Override
+    public void onBackPressed() {
+    }
     private void openTimePicker(){
         pickerTime = new MaterialTimePicker.Builder().setHour(12).setMinute(0).setTitleText("Выбрать время поездки").build();
         pickerTime.show(fm, "TAG");

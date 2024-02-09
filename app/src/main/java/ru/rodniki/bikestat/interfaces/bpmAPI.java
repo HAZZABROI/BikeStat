@@ -1,4 +1,4 @@
-package ru.rodniki.bikestat;
+package ru.rodniki.bikestat.interfaces;
 
 
 import java.util.Map;
@@ -15,5 +15,4 @@ import ru.rodniki.bikestat.models.bpmModel;
 public interface bpmAPI {
     @GET("ppo_it/api/watch/")
     Call<bpmModel> getBpm(@Header("x-access-tokens") String token);
-//    Call<Object> getBpm(@Header("x-access-tokens") String token);
 }
