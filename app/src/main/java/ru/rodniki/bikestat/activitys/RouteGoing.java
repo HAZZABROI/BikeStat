@@ -248,7 +248,7 @@ public class RouteGoing extends AppCompatActivity implements UserLocationObjectL
             }
         });
     }
-    public int toTime(String time){
+    public double toTime(String time){
         Pattern pattern = Pattern.compile("(\\d+)\\s*(days?|hr|min)");
         Matcher matcher = pattern.matcher(time);
 
@@ -273,7 +273,7 @@ public class RouteGoing extends AppCompatActivity implements UserLocationObjectL
             }
         }
 
-        int totalMinutes = days * 24 + hours + minutes / 60;;
+        double totalMinutes = days * 24 + hours + minutes / 60;;
 
         return totalMinutes;
     }

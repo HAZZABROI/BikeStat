@@ -18,9 +18,9 @@
             android:id="@+id/btnDialogYes"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="50dp"
+            android:layout_marginStart="20dp"
             android:layout_marginTop="18dp"
-            android:layout_marginEnd="50dp"
+            android:layout_marginEnd="20dp"
             android:layout_marginBottom="20dp"
             android:text="Да"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -33,14 +33,13 @@
             android:id="@+id/btnDialogNo"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="50dp"
-            android:layout_marginTop="18dp"
-            android:layout_marginEnd="50dp"
+            android:layout_marginEnd="20dp"
             android:text="Нет"
+            app:layout_constraintBottom_toBottomOf="@+id/btnDialogYes"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toEndOf="@+id/btnDialogYes"
-            app:layout_constraintTop_toBottomOf="@+id/textView7" />
+            app:layout_constraintTop_toTopOf="@+id/btnDialogYes" />
 
         <TextView
             android:id="@+id/textView7"
