@@ -1,13 +1,7 @@
 package ru.rodniki.bikestat.interfaces;
 
-
-import java.util.Map;
-import java.util.Objects;
-
-import io.reactivex.Single;
 import retrofit2.Call;
 
-import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import ru.rodniki.bikestat.models.bpmModel;

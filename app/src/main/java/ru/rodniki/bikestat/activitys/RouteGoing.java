@@ -57,7 +57,6 @@ import com.yandex.runtime.image.ImageProvider;
 import com.yandex.runtime.network.NetworkError;
 import com.yandex.runtime.network.RemoteError;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
@@ -93,7 +92,6 @@ public class RouteGoing extends AppCompatActivity implements UserLocationObjectL
     String token = "az4fvf7nzi1XPIsYiMEu";
     UserLocationLayer userLocationLayer;
     ArrayList<Float> arrayV;
-    ResponseBody result;
     Realm uiThreadRealm;
     RouteRealm routeRealm;
     Dialog dialogNewRoute;
@@ -182,21 +180,7 @@ public class RouteGoing extends AppCompatActivity implements UserLocationObjectL
                 String kkal = df.format(0.014 * 63.4 * (time.floatValue()/60000) * (0.12 * responseAll.getData().getPulse().getAvg()));
                 String diff = getDiff(String.valueOf(time.floatValue()/60000), distanceTotalMetr, responseAll.getData().getPulse().getAvg().toString());
                 String diffPre = getDiff(String.valueOf(toTime(totalTime)), distanceTotalMetr, responseAll.getData().getPulse().getAvg().toString());
-//                intent2.putExtra("isNewRoute", true);
-//                intent2.putExtra("isInit", true);
-//                intent2.putExtra("mapURI", mapURI);
-//                intent2.putExtra("timeStart", timeStart);
-//                intent2.putExtra("dateStart", dateStart);
-//                intent2.putExtra("distanceTotal", distanceTotal);
-//                intent2.putExtra("distanceTotalMetr", distanceTotalMetr);
-//                intent2.putExtra("timeTotal", text);
-//                intent2.putExtra("diff", diff);
-//                intent2.putExtra("diffPre", diffPre);
-//                intent2.putExtra("kkal", kkal);
-//                intent2.putExtra("avgBPM", responseAll.getData().getPulse().getAvg().toString());
-//                intent2.putExtra("minBPM", responseAll.getData().getPulse().getMin().toString());
-//                intent2.putExtra("maxBPM", responseAll.getData().getPulse().getMax().toString());
-//                startActivity(intent2);
+
                 dialogNewRoute = new Dialog(RouteGoing.this);
                 dialogNewRoute.setContentView(R.layout.layoutcustom_dialog_new_route);
                 dialogNewRoute.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT);

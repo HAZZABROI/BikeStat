@@ -76,7 +76,7 @@ import com.yandex.runtime.network.NetworkError;
 import com.yandex.runtime.network.RemoteError;
 
 import java.util.ArrayList;
-import java.util.Calendar;
+
 import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -97,7 +97,7 @@ public class NewTrailActivity extends AppCompatActivity implements UserLocationO
     CardView backLayout;
     ConstraintLayout layout;
     ImageView close;
-    Dialog dialog, dialogNewRoute;
+    Dialog dialog;
     Button dialogContinue, configBtn, scheduleRoute, testStart, btnDialogYes, btnDialogNo;
     CardView ViewMapCard;
     EditText editTextFrom, editTextDist;
@@ -117,7 +117,7 @@ public class NewTrailActivity extends AppCompatActivity implements UserLocationO
     Weight weight;
     UriObjectMetadata uriRoute;
     Boolean initialized;
-    String mapURI, timeStart, dateStart, distanceTotal, avgBPM, minBPM, maxBPM, timeTotalStr, kkal, diff, diffPre, distanceTotalMetr, diffStr;
+    String diffStr;
     com.yandex.mapkit.transport.bicycle.Session drivingSession;
     float k;
 
@@ -135,67 +135,6 @@ public class NewTrailActivity extends AppCompatActivity implements UserLocationO
         Realm.init(this);
         uiThreadRealm = Realm.getDefaultInstance();
         initialized = intent.getBooleanExtra("isInit", false);
-//        if (intent.getBooleanExtra("isNewRoute", false)){
-//            mapURI = intent.getStringExtra("mapURI");
-//            timeStart = intent.getStringExtra("timeStart");
-//            dateStart = intent.getStringExtra("dateStart");
-//            distanceTotal = intent.getStringExtra("distanceTotal");
-//            avgBPM = intent.getStringExtra("avgBPM");
-//            kkal = intent.getStringExtra("kkal");
-//            minBPM = intent.getStringExtra("minBPM");
-//            distanceTotalMetr = intent.getStringExtra("distanceTotalMetr");
-//            maxBPM = intent.getStringExtra("maxBPM");
-//            diff = intent.getStringExtra("diff");
-//            diffPre = intent.getStringExtra("diffPre");
-//            timeTotalStr = intent.getStringExtra("timeTotal");
-//            dialogNewRoute = new Dialog(NewTrailActivity.this);
-//            dialogNewRoute.setContentView(R.layout.layoutcustom_dialog_new_route);
-//            dialogNewRoute.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT);
-//            dialogNewRoute.setCancelable(false);
-//            dialogNewRoute.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
-//            dialogNewRoute.show();
-//            btnDialogYes = dialogNewRoute.findViewById(R.id.btnDialogYes);
-//            btnDialogNo = dialogNewRoute.findViewById(R.id.btnDialogNo);
-//
-//            btnDialogYes.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    routeRealm.setMapURI(mapURI);
-//                    routeRealm.setTimeStart(timeStart);
-//                    routeRealm.setDateStart(dateStart);
-//                    routeRealm.setBPM(avgBPM);
-//                    routeRealm.setDiff(diff);
-//                    routeRealm.setDiffPre(diffPre);
-//                    routeRealm.setDistanceTotalMetr(distanceTotalMetr);
-//                    routeRealm.setKkal(kkal);
-//                    routeRealm.setTimeTotal(timeTotalStr);
-//                    routeRealm.setDistanceTotal(distanceTotal);
-//                    routeRealm.setBPM(avgBPM + "/" + minBPM + "/" + maxBPM);
-//                    uiThreadRealm.close();
-//                    uiThreadRealm.executeTransactionAsync(new Realm.Transaction() {
-//                        @Override
-//                        public void execute(Realm realm) {
-//                            realm.copyToRealm(routeRealm);
-//                            routeRealm = new RouteRealm();
-//                            Intent intent2 = new Intent(NewTrailActivity.this, MainActivity.class);
-//                            intent2.putExtra("isInit", true);
-//                            startActivity(intent2);
-//                        }
-//                    });
-//
-//                }
-//            });
-//            btnDialogNo.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    dialogNewRoute.dismiss();
-//                    Intent intent3 = new Intent(NewTrailActivity.this, MainActivity.class);
-//                    intent3.putExtra("isInit", true);
-//                }
-//            });
-//        } else {
-//
-//        }
         MapKitInitializer mapKitInitializer = new MapKitInitializer();
         mapKitInitializer.initializeMapKit(getApplicationContext(), initialized);
         setContentView(R.layout.activity_new_trail);

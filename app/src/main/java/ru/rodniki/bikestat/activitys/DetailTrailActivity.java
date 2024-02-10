@@ -9,7 +9,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Message;
+
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -38,25 +38,16 @@ import com.yandex.runtime.Error;
 import com.yandex.runtime.network.NetworkError;
 import com.yandex.runtime.network.RemoteError;
 
-import java.text.DateFormat;
-import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
-import java.util.TimeZone;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import io.realm.Realm;
 import io.realm.RealmResults;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import ru.rodniki.bikestat.interfaces.bpmAPI;
+
 import ru.rodniki.bikestat.models.RouteRealm;
-import ru.rodniki.bikestat.models.bpmModel;
+
 import ru.rodniki.bikestat.utils.MapKitInitializer;
 import ru.rodniki.bikestat.R;
 
@@ -71,16 +62,12 @@ public class DetailTrailActivity extends AppCompatActivity implements UserLocati
     BicycleRouter bicycleRouter;
     ImageView imageDelete;
     MapObjectCollection mapObjectCollection;
-    String getUrl = "https://dt.miet.ru";
-    String token = "az4fvf7nzi1XPIsYiMEu";
     Button buttonStart;
     Realm uiThreadRealm;
     boolean isSchedule;
     com.yandex.mapkit.transport.bicycle.Session drivingSession;
     float k;
     long startTime = System.currentTimeMillis();
-    bpmAPI retrofitRes;
-    bpmModel responseAll;
     Boolean initialized;
 
     @Override
